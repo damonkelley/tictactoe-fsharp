@@ -45,6 +45,8 @@ Target "Test" (fun _ ->
     !! (testDir + "/**/bin/Debug/*.Test.dll")
     |> NUnit3 (fun p ->
             {p with
+                ShadowCopy = true;
+                Labels = LabelsLevel.All;
                 ToolPath = "packages/NUnit.ConsoleRunner/tools/nunit3-console.exe"}))
 
 Target "Deploy" (fun _ ->
