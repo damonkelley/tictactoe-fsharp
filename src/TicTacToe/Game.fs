@@ -1,6 +1,6 @@
 module Game
 
-type Outcome = InProgress
+type Outcome = Winner | InProgress
 type Player = string
 type Game = {
     Outcome: Outcome;
@@ -12,9 +12,6 @@ let create () =
         Outcome = InProgress;
         Board = Board.create()
     }
-
-let move space player game =
-    {game with Board = Board.move space player game.Board}
 
 let private allMarkersMatch markers =
     match markers with
@@ -28,5 +25,13 @@ let findWinner game =
     game.Board
     |> Board.partition
     |> List.filter onlyMarkers
-    |> List.head
-    |> allMarkersMatch
+    |> List.tryPick allMarkersMatch
+
+let updateOutcome game =
+    match findWinner game with
+    | Some winner -> {game with Outcome = Winner}
+    | None -> game
+
+let move space player game =
+    {game with Board = Board.move space player game.Board;}
+    |> updateOutcome

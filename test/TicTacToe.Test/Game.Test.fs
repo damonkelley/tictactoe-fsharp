@@ -6,6 +6,14 @@ open TestHelpers
 
 let game = Game.create()
 
+let xWins game =
+    game
+    |> move 0 "X"
+    |> move 3 "O"
+    |> move 1 "X"
+    |> move 4 "O"
+    |> move 2 "X"
+
 [<Test>]
 let ``create makes a new Game record`` () =
     let expectedGame = {
@@ -13,6 +21,24 @@ let ``create makes a new Game record`` () =
         Board = Board.create()
     }
     Game.create() |> should equal expectedGame
+
+[<Test>]
+let ``updateOutcome checks for a winner`` () =
+    let game =
+        game
+        |> xWins
+        |> updateOutcome
+
+    game.Outcome |> should equal Winner
+
+[<Test>]
+let ``move updates the outcome`` () =
+    game.Outcome |> should equal InProgress
+
+    let game = game |> xWins
+
+    game.Outcome |> should equal Winner
+
 
 [<Test>]
 let ``move updates the board`` () =
@@ -42,6 +68,10 @@ let ``findWinner finds some winner`` () =
 
 [<Test>]
 let ``or findWinner finds none`` () =
+    Game.create()
+        |> findWinner
+        |> should equal None
+
     Game.create()
         |> move 0 "X"
         |> move 3 "O"
