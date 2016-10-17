@@ -1,0 +1,9 @@
+language: csharp
+os:
+    - linux
+    - osx
+mono:
+    - latest
+    - 4.6.0
+
+script: ./build.sh
