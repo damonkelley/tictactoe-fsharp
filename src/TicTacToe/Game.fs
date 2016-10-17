@@ -1,7 +1,6 @@
 module Game
 
 type Outcome = InProgress
-type Space = Player | Empty
 type Player = string
 type Game = {
     Outcome: Outcome;
@@ -14,5 +13,5 @@ let create () =
         Board = Board.create()
     }
 
-let move space game =
-    {game with Board = Board.move space "X" game.Board}
+let move space player game =
+    {game with Board = Board.move space player game.Board}

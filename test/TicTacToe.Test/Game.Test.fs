@@ -16,5 +16,8 @@ let ``create makes a new Game record`` () =
 
 [<Test>]
 let ``move updates the board`` () =
-    let expectedGame = {game with Board = Board.move 0 "X" game.Board}
-    expectedGame |> shouldEqual <| Game.move 0 game
+    {game with Board = Board.move 0 "X" game.Board}
+        |> shouldEqual <| Game.move 0 "X" game
+
+    {game with Board = Board.move 0 "O" game.Board}
+        |> shouldEqual <| Game.move 0 "O" game
