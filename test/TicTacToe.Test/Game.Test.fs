@@ -14,12 +14,24 @@ let xWins game =
     |> move 5 "O"
     |> move 3 "X"
 
+let draw game =
+    game
+    |> move 1 "X"
+    |> move 3 "O"
+    |> move 7 "X"
+    |> move 4 "O"
+    |> move 9 "X"
+    |> move 5 "O"
+    |> move 6 "X"
+    |> move 8 "O"
+    |> move 2 "X"
+
 [<Test>]
 let ``create makes a new Game record`` () =
-    let expectedGame = {
-        Outcome = InProgress;
-        Board = Board.create()
-    }
+    let expectedGame =
+        { Outcome = InProgress
+        ; Board = Board.create()
+        }
     Game.create() |> should equal expectedGame
 
 [<Test>]
@@ -30,6 +42,15 @@ let ``updateOutcome checks for a winner`` () =
         |> updateOutcome
 
     game.Outcome |> should equal <| Winner "X"
+
+[<Test>]
+let ``updateOutcome checks for a draw`` () =
+    let game =
+        game
+        |> draw
+        |> updateOutcome
+
+    game.Outcome |> should equal Draw
 
 [<Test>]
 let ``move updates the outcome`` () =

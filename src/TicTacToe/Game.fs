@@ -4,6 +4,7 @@ type Player = string
 
 type Outcome =
     | Winner of Player
+    | Draw
     | InProgress
 
 type Game =
@@ -34,9 +35,10 @@ let findWinner game =
     |> List.tryPick allMarkersMatch
 
 let updateOutcome game =
-    match findWinner game with
-    | Some winner -> {game with Outcome = Winner winner}
-    | None -> game
+    match (findWinner game), (availableSpaces game) with
+    | Some player , _ -> {game with Outcome = Winner player}
+    | None, []        -> {game with Outcome = Draw}
+    | _, _            ->  game
 
 let move space player game =
     {game with Board = Board.move space player game.Board;}
