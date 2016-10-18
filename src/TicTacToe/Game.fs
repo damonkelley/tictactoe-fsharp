@@ -10,11 +10,15 @@ type Outcome =
 type Game =
     { Outcome: Outcome
     ; Board: Board.Board<Player>
+    ; Players: Player * Player
+    ; Turn: Player
     }
 
-let create () =
+let create playerOne playerTwo =
     { Outcome = InProgress
     ; Board = Board.create()
+    ; Players = playerOne, playerTwo
+    ; Turn = playerOne
     }
 
 let availableSpaces game =
@@ -40,6 +44,19 @@ let updateOutcome game =
     | None, []        -> {game with Outcome = Draw}
     | _, _            ->  game
 
+let swapTurn game =
+    match game with
+    | {Turn = player; Players = p1, p2} when player = p1 -> {game with Turn = p2}
+    | {Players = p1, _}                                  -> {game with Turn = p1}
+
 let move space player game =
     {game with Board = Board.move space player game.Board;}
     |> updateOutcome
+    |> swapTurn
+
+let rec private playWithMoves game moves =
+    moves
+    |> List.fold (fun game m -> move m game.Turn game) game
+
+let play = function
+    | game, moves -> playWithMoves game moves
