@@ -16,6 +16,9 @@ let create () =
     ; Board = Board.create()
     }
 
+let availableSpaces game =
+    Board.collect (Board.Empty, game.Board)
+
 let private allMarkersMatch markers =
     match markers with
     | Board.Marker a :: Board.Marker b :: Board.Marker c :: xs when a = b && b = c -> Some a

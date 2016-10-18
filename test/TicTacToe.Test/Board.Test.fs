@@ -68,3 +68,15 @@ let ``the board can be partitioned into diagonals`` () =
     partitions |> should contain [Marker "A"; Marker "X"; Marker "B"]
     partitions |> should contain [Marker "C"; Marker "X"; Marker "D"]
     partitions.Length |> should equal 8
+
+[<Test>]
+let ``collect can get all of the space ids that are Empty`` () =
+    let board = Board.create()
+
+    collect (Board.Empty, board)
+    |> shouldEqual [1; 2; 3; 4; 5; 6; 7; 8; 9]
+
+    let board = board |> move 1 "X" |> move 2 "O"
+
+    collect (Board.Empty, board)
+    |> shouldEqual [3; 4; 5; 6; 7; 8; 9]

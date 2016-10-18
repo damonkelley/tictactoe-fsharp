@@ -9,6 +9,18 @@ let create () : Board<'a> =
 let move (space:int) (marker:'a) (board:Board<'a>) : Board<'a> =
     Map.add space (Marker marker) board
 
+let private collectEmpty board =
+    board
+    |> Map.toList
+    |> List.choose (function
+                    | id, Empty -> Some id
+                    | _, _ -> None)
+
+
+let collect = function
+    | (Empty), board -> collectEmpty board
+    | (Marker x), board -> []
+
 let private rows =
     [ [1; 2; 3]
     ; [4; 5; 6]

@@ -51,11 +51,7 @@ let ``move updates the board`` () =
 [<Test>]
 let ``findWinner finds some winner`` () =
     Game.create()
-        |> move 1 "X"
-        |> move 4 "O"
-        |> move 2 "X"
-        |> move 5 "O"
-        |> move 3 "X"
+        |> xWins
         |> findWinner
         |> should equal <| Some "X"
 
@@ -67,11 +63,7 @@ let ``findWinner finds some winner`` () =
         |> should equal <| Some "O"
 
 [<Test>]
-let ``or findWinner finds none`` () =
-    Game.create()
-        |> findWinner
-        |> should equal None
-
+let ``findWinner finds none when there is no winner`` () =
     Game.create()
         |> move 1 "X"
         |> move 4 "O"
@@ -80,3 +72,24 @@ let ``or findWinner finds none`` () =
         |> move 9 "X"
         |> findWinner
         |> should equal None
+
+[<Test>]
+let ``findWinner finds none with an empty board`` () =
+    Game.create()
+        |> findWinner
+        |> should equal None
+
+
+[<Test>]
+let ``availableSpaces collects all spaces when the board is empty`` () =
+    Game.create()
+    |> Game.availableSpaces
+    |> shouldEqual <| [1; 2; 3; 4; 5; 6; 7; 8; 9]
+
+[<Test>]
+let ``availableSpaces collects only the empty spaces`` () =
+    Game.create()
+    |> move 4 "X"
+    |> move 5 "O"
+    |> Game.availableSpaces
+    |> shouldEqual <| [1; 2; 3; 6; 7; 8; 9]
