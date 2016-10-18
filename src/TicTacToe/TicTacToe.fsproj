@@ -44,6 +44,7 @@
     <Compile Include="Game.fs" />
     <Compile Include="UI.fs" />
     <Compile Include="Console.fs" />
+    <Compile Include="InputTransformer.fs" />
     <Compile Include="TicTacToe.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
