@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FSharpLintSettings>
   <Analysers>
+    <NameConventions>
+      <Rules>
+        <InterfaceNamesMustBeginWithI>
+          <Enabled>false</Enabled>
+        </InterfaceNamesMustBeginWithI>
+      </Rules>
+    </NameConventions>
+
     <Typography>
       <Rules>
         <MaxCharactersOnLine>
