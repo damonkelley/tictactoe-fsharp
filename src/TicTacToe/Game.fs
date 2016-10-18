@@ -9,16 +9,16 @@ type Outcome =
 
 type Game =
     { Outcome: Outcome
-    ; Board: Board.Board<Player>
+    ; Board:   Board.Board<Player>
     ; Players: Player * Player
-    ; Turn: Player
+    ; Turn:    Player
     }
 
 let create playerOne playerTwo =
-    { Outcome = InProgress
-    ; Board = Board.create()
-    ; Players = playerOne, playerTwo
-    ; Turn = playerOne
+    { Outcome  = InProgress
+    ; Board    = Board.create()
+    ; Players  = playerOne, playerTwo
+    ; Turn     = playerOne
     }
 
 let availableSpaces game =

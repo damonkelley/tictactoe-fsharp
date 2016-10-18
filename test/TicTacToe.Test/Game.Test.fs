@@ -30,9 +30,9 @@ let draw game =
 let ``create makes a new Game record`` () =
     let expectedGame =
         { Outcome = InProgress
-        ; Board = Board.create()
+        ; Board   = Board.create()
         ; Players = "X", "O"
-        ; Turn = "X"
+        ; Turn    = "X"
         }
     Game.create "X" "O" |> should equal expectedGame
 
