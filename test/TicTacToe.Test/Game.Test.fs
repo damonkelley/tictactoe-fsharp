@@ -29,7 +29,7 @@ let ``updateOutcome checks for a winner`` () =
         |> xWins
         |> updateOutcome
 
-    game.Outcome |> should equal Winner
+    game.Outcome |> should equal <| Winner "X"
 
 [<Test>]
 let ``move updates the outcome`` () =
@@ -37,7 +37,7 @@ let ``move updates the outcome`` () =
 
     let game = game |> xWins
 
-    game.Outcome |> should equal Winner
+    game.Outcome |> should equal <| Winner "X"
 
 
 [<Test>]

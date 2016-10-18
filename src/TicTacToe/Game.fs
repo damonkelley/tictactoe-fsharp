@@ -1,16 +1,19 @@
 module Game
 
-type Outcome = Winner | InProgress
 type Player = string
-type Game = {
-    Outcome: Outcome;
-    Board: Board.Board<Player>;
-}
+
+type Outcome =
+    | Winner of Player
+    | InProgress
+
+type Game =
+    { Outcome: Outcome
+    ; Board: Board.Board<Player>
+    }
 
 let create () =
-    {
-        Outcome = InProgress;
-        Board = Board.create()
+    { Outcome = InProgress
+    ; Board = Board.create()
     }
 
 let private allMarkersMatch markers =
@@ -29,7 +32,7 @@ let findWinner game =
 
 let updateOutcome game =
     match findWinner game with
-    | Some winner -> {game with Outcome = Winner}
+    | Some winner -> {game with Outcome = Winner winner}
     | None -> game
 
 let move space player game =
