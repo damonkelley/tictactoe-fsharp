@@ -8,11 +8,11 @@ let game = Game.create()
 
 let xWins game =
     game
-    |> move 0 "X"
-    |> move 3 "O"
     |> move 1 "X"
     |> move 4 "O"
     |> move 2 "X"
+    |> move 5 "O"
+    |> move 3 "X"
 
 [<Test>]
 let ``create makes a new Game record`` () =
@@ -42,27 +42,27 @@ let ``move updates the outcome`` () =
 
 [<Test>]
 let ``move updates the board`` () =
-    {game with Board = Board.move 0 "X" game.Board}
-        |> shouldEqual <| Game.move 0 "X" game
+    {game with Board = Board.move 1 "X" game.Board}
+        |> shouldEqual <| Game.move 1 "X" game
 
-    {game with Board = Board.move 0 "O" game.Board}
-        |> shouldEqual <| Game.move 0 "O" game
+    {game with Board = Board.move 1 "O" game.Board}
+        |> shouldEqual <| Game.move 1 "O" game
 
 [<Test>]
 let ``findWinner finds some winner`` () =
     Game.create()
-        |> move 0 "X"
-        |> move 3 "O"
         |> move 1 "X"
         |> move 4 "O"
         |> move 2 "X"
+        |> move 5 "O"
+        |> move 3 "X"
         |> findWinner
         |> should equal <| Some "X"
 
     Game.create()
-        |> move 3 "O"
         |> move 4 "O"
         |> move 5 "O"
+        |> move 6 "O"
         |> findWinner
         |> should equal <| Some "O"
 
@@ -73,10 +73,10 @@ let ``or findWinner finds none`` () =
         |> should equal None
 
     Game.create()
-        |> move 0 "X"
-        |> move 3 "O"
         |> move 1 "X"
         |> move 4 "O"
-        |> move 8 "X"
+        |> move 2 "X"
+        |> move 5 "O"
+        |> move 9 "X"
         |> findWinner
         |> should equal None

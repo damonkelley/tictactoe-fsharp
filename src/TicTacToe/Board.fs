@@ -4,26 +4,26 @@ type Space<'a> = Marker of 'a | Empty
 type Board<'a> = Map<int, Space<'a>>
 
 let create () : Board<'a> =
-    [for i in [0..8] -> i, Empty] |> Map.ofList
+    [for i in [1..9] -> i, Empty] |> Map.ofList
 
 let move (space:int) (marker:'a) (board:Board<'a>) : Board<'a> =
     Map.add space (Marker marker) board
 
 let private rows =
-    [ [0; 1; 2]
-    ; [3; 4; 5]
-    ; [6; 7; 8]
+    [ [1; 2; 3]
+    ; [4; 5; 6]
+    ; [7; 8; 9]
     ]
 
 let private columns =
-    [ [0; 3; 6]
-    ; [1; 4; 7]
+    [ [1; 4; 7]
     ; [2; 5; 8]
+    ; [3; 6; 9]
     ]
 
 let private diagonals =
-    [ [0; 4; 8]
-    ; [6; 4; 2]
+    [ [1; 5; 9]
+    ; [7; 5; 3]
     ]
 
 let private partitionWith indexes (board:Board<'a>)=
@@ -32,9 +32,8 @@ let private partitionWith indexes (board:Board<'a>)=
             Map.find i board]]
 
 let partition board =
-    let partitions =
-        List.append
-        <| partitionWith rows board
-        <| partitionWith columns board
+    let rows = partitionWith rows board
+    let columns = partitionWith columns board
+    let diagonals = partitionWith diagonals board
 
-    List.append partitions <| partitionWith diagonals board
+    List.concat (rows :: columns :: diagonals :: List.empty)
