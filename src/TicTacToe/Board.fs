@@ -36,4 +36,4 @@ let partition board =
     let columns = partitionWith columns board
     let diagonals = partitionWith diagonals board
 
-    List.concat (rows :: columns :: diagonals :: List.empty)
+    List.concat (rows :: columns :: [diagonals])

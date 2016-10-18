@@ -1,8 +1,10 @@
 // include Fake libs
 #r "./packages/FAKE/tools/FakeLib.dll"
+#r @"./packages/FSharpLint/FSharpLint.FAKE.dll"
 
 open Fake
 open Fake.Testing
+open FSharpLint.FAKE
 
 let buildDir  = "./build/"
 let deployDir = "./deploy/"
@@ -49,6 +51,11 @@ Target "Test" (fun _ ->
                 Labels = LabelsLevel.All;
                 ToolPath = "packages/NUnit.ConsoleRunner/tools/nunit3-console.exe"}))
 
+
+Target "Lint" (fun _ ->
+    !! "**/**/*.fsproj"
+        |> Seq.iter (FSharpLint id))
+
 Target "Deploy" (fun _ ->
     !! (buildDir + "/**/*.*")
     -- "*.zip"
@@ -57,6 +64,7 @@ Target "Deploy" (fun _ ->
 
 "Clean"
   ==> "BuildTest"
+  ==> "Lint"
   ==> "Test"
   ==> "Build"
   ==> "Deploy"
