@@ -2,6 +2,7 @@ module Console.Test
 
 open NUnit.Framework
 open FsUnit
+open TestHelpers
 
 open UI
 open Console
@@ -12,8 +13,7 @@ let console = new Console() :> UI
 
 [<Test>]
 let ``console reads from stdin`` () =
-    let console = new Console() :> UI
-    System.Console.SetIn(new StringReader("A\nB\n")) |> ignore
+    new StringReader("A\nB\n") |> patchStdIn |> ignore
 
     console.ReadLine()
     |> should equal <| Some "A"
@@ -23,8 +23,7 @@ let ``console reads from stdin`` () =
 
 [<Test>]
 let ``console writes to stdout`` () =
-    let output = new StringWriter()
-    System.Console.SetOut(output) |> ignore
+    let output = new StringWriter() |> patchStdOut
 
     console.Write "A" |> ignore
     output.ToString() |> should equal "A"
@@ -34,18 +33,16 @@ let ``console writes to stdout`` () =
 
 [<Test>]
 let ``console prompts can prompt for input`` () =
-    let output = new StringWriter()
-    System.Console.SetOut(output) |> ignore
-    System.Console.SetIn(new StringReader("5\n")) |> ignore
+    let output = new StringWriter() |> patchStdOut
+    new StringReader("5\n") |> patchStdIn |> ignore
 
     console.Prompt "How old are you" id
     |> should equal "5"
 
 [<Test>]
 let ``prompt uses a transformer to validate and parse the input`` () =
-    let output = new StringWriter()
-    System.Console.SetOut(output) |> ignore
-    System.Console.SetIn(new StringReader("5\n")) |> ignore
+    let output = new StringWriter() |> patchStdOut
+    new StringReader("5\n") |> patchStdIn |> ignore
 
     let transformer input =
         Some "tranformed"
