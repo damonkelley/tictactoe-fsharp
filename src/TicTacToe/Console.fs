@@ -14,5 +14,9 @@ type Console() =
             (this :> UI)
 
         member this.Prompt phrase transformer =
-            System.Console.ReadLine()
-            |> transformer
+            let console = (this :> UI)
+            console.Write(phrase + " ") |> ignore
+
+            match transformer <| console.ReadLine() with
+            | None -> console.Prompt phrase transformer
+            | Some input -> input

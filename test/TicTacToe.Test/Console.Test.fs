@@ -12,6 +12,10 @@ open Console
 
 let console = new Console() :> UI
 
+[<TearDown>]
+let ``reset stdin and stdout`` () =
+    resetIO()
+
 [<Test>]
 let ``ReadLine reads from stdin`` () =
     new StringReader("A\nB\n") |> patchStdIn |> ignore
@@ -44,8 +48,10 @@ let ``Prompt will prompt for input from stdin`` () =
     let output = new StringWriter() |> patchStdOut
     new StringReader("5\n") |> patchStdIn |> ignore
 
-    console.Prompt "How old are you" id
+    console.Prompt "How old are you?" id
     |> should equal "5"
+
+    output.ToString() |> should contain "How old are you? "
 
 [<Test>]
 let ``Prompt uses a transformer to validate and parse the input`` () =
@@ -56,4 +62,21 @@ let ``Prompt uses a transformer to validate and parse the input`` () =
         Some "tranformed"
 
     console.Prompt "How old are you" transformer
-    |> should equal <| Some "tranformed"
+    |> should equal <| "tranformed"
+
+
+[<Test>]
+let ``Prompt will continue to prompt until Some value is returned`` () =
+    let output = new StringWriter() |> patchStdOut
+    new StringReader("1\n2\n3\n") |> patchStdIn |> ignore
+
+    let transformer = function
+        | Some "1" -> None
+        | Some "2" -> None
+        | Some _ -> Some "success!"
+        | None -> failwith "Fail"
+
+    console.Prompt "->" transformer
+    |> should equal <| "success!"
+
+    output.ToString() |> should contain <| "-> -> -> "

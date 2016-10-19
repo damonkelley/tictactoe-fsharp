@@ -5,7 +5,7 @@ let private (|Integer|_|) str =
     | (true, integer) -> Some integer
     | _ -> None
 
-let toWhitelistedInteger whitelist (input:string) =
+let toWhitelistedInteger whitelist (input:string option) =
     match input with
-    | Integer i when Seq.contains i whitelist -> Some i
+    | Some(Integer i) when Seq.contains i whitelist -> Some i
     | _ -> None
