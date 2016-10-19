@@ -17,6 +17,14 @@ let ``move updates the board`` () =
     |> shouldEqual <| (create().Add(1, Board.Marker "X"))
 
 [<Test>]
+let ``toList returns a list of tuples`` () =
+    let board = create() |> move 1 "X"
+
+    board
+    |> Board.toList
+    |> shouldEqual <| Map.toList board
+
+[<Test>]
 let ``the board can be parititioned into rows`` () =
     let partitions =
         create()

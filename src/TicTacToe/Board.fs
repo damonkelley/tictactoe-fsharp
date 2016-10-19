@@ -9,6 +9,9 @@ let create () : Board<'a> =
 let move (space:int) (marker:'a) (board:Board<'a>) : Board<'a> =
     Map.add space (Marker marker) board
 
+let toList board =
+    Map.toList board
+
 let private collectEmpty board =
     board
     |> Map.toList
