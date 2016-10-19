@@ -4,15 +4,16 @@ open NUnit.Framework
 open FsUnit
 open TestHelpers
 
-open UI
-open Console
 open System.IO
 open System.Text
+
+open UI
+open Console
 
 let console = new Console() :> UI
 
 [<Test>]
-let ``console reads from stdin`` () =
+let ``ReadLine reads from stdin`` () =
     new StringReader("A\nB\n") |> patchStdIn |> ignore
 
     console.ReadLine()
@@ -22,7 +23,14 @@ let ``console reads from stdin`` () =
     |> should equal <| Some "B"
 
 [<Test>]
-let ``console writes to stdout`` () =
+let ``ReadLine returns None when there is no more input`` () =
+    new StringReader("") |> patchStdIn |> ignore
+
+    console.ReadLine()
+    |> should equal <| None
+
+[<Test>]
+let ``Write writes to stdout`` () =
     let output = new StringWriter() |> patchStdOut
 
     console.Write "A" |> ignore
@@ -32,7 +40,7 @@ let ``console writes to stdout`` () =
     output.ToString() |> should equal "AB"
 
 [<Test>]
-let ``console prompts can prompt for input`` () =
+let ``Prompt will prompt for input from stdin`` () =
     let output = new StringWriter() |> patchStdOut
     new StringReader("5\n") |> patchStdIn |> ignore
 
@@ -40,7 +48,7 @@ let ``console prompts can prompt for input`` () =
     |> should equal "5"
 
 [<Test>]
-let ``prompt uses a transformer to validate and parse the input`` () =
+let ``Prompt uses a transformer to validate and parse the input`` () =
     let output = new StringWriter() |> patchStdOut
     new StringReader("5\n") |> patchStdIn |> ignore
 
