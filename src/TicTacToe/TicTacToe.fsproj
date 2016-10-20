@@ -40,13 +40,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="UI.fs" />
+    <Compile Include="InputTransformer.fs" />
     <Compile Include="Board.fs" />
     <Compile Include="Player.fs" />
     <Compile Include="Game.fs" />
-    <Compile Include="UI.fs" />
     <Compile Include="Console.fs" />
     <Compile Include="Strategy.fs" />
-    <Compile Include="InputTransformer.fs" />
     <Compile Include="Presenter.fs" />
     <Compile Include="TicTacToe.fs" />
   </ItemGroup>

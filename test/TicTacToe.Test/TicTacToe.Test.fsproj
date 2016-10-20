@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestHelpers.fs" />
+    <Compile Include="TestDoubles.fs" />
     <Compile Include="Board.Test.fs" />
     <Compile Include="Player.Test.fs" />
     <Compile Include="Game.Test.fs" />

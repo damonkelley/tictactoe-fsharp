@@ -5,4 +5,3 @@ let randomSpace game =
     let available = Game.availableSpaces game
 
     available.Item (random.Next <| available.Length)
-
