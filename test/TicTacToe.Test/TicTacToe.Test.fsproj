@@ -50,6 +50,7 @@
     <Compile Include="Player.Test.fs" />
     <Compile Include="Game.Test.fs" />
     <Compile Include="Console.Test.fs" />
+    <Compile Include="Strategy.Test.fs" />
     <Compile Include="InputTransformer.Test.fs" />
     <Compile Include="Presenter.Test.fs" />
     <Compile Include="TicTacToe.Test.fs" />

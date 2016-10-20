@@ -26,11 +26,15 @@ let private present ttt =
     ttt.Presenter ttt.Game
     |> write ttt
 
-let private userMove ttt =
+let private humanMove (ui:UI) game =
     let transformer =
         toWhitelistedInteger << availableSpaces
 
-    ttt.UI.Prompt prompt <| transformer ttt.Game
+    ui.Prompt prompt <| transformer game
+
+let private userMove {Game = game; UI = ui} =
+    match game with
+    | {Turn = {Type = Player.Human}} -> humanMove ui game
 
 let private move ttt =
     {ttt with Game = Game.move <| userMove ttt <| ttt.Game}
