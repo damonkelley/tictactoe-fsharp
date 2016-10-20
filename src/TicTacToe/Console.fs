@@ -3,6 +3,8 @@ module Console
 open UI
 
 type Console() =
+    let clearScreen = "\x1b[2J\x1b[H"
+
     interface UI with
         member this.ReadLine () =
            match  System.Console.ReadLine() with
@@ -20,3 +22,6 @@ type Console() =
             match transformer <| console.ReadLine() with
             | None -> console.Prompt phrase transformer
             | Some input -> input
+
+        member this.Update () =
+            (this :> UI).Write(clearScreen)

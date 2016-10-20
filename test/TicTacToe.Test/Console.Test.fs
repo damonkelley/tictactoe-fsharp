@@ -80,3 +80,9 @@ let ``Prompt will continue to prompt until Some value is returned`` () =
     |> should equal <| "success!"
 
     output.ToString() |> should contain <| "-> -> -> "
+
+[<Test>]
+let ``Update will clear the screen`` () =
+    let output = new StringWriter() |> patchStdOut
+    console.Update() |> ignore
+    output.ToString() |> should equal "\x1b[2J\x1b[H"
