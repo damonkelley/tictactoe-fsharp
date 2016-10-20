@@ -16,10 +16,9 @@ let create ui presenter p1 p2 =
     ; Presenter = presenter
     }
 
-let presentOutcome = function
-    | {Game = {Outcome = Draw}} -> "Draw"
-    | {Game = {Outcome = Winner w}} -> sprintf "%s wins!" w
-    | _ -> ""
+let private write ttt output =
+    ttt.UI.Write(output) |> ignore
+    ttt
 
 let private transformer =
     toWhitelistedInteger << availableSpaces
@@ -28,15 +27,13 @@ let private userMove ttt =
     ttt.UI.Prompt "-> " (transformer ttt.Game)
 
 let private present ttt =
-    Presenter.present ttt.Game |> ttt.UI.Write |> ignore
-    presentOutcome ttt
-    |> ttt.UI.Write
-    |> ignore
-    ttt
+    Presenter.present ttt.Game
+    |> write ttt
 
-let private doTurn ttt =
-    {ttt with Game = play(ttt.Game, [userMove ttt])}
-    |> present
+let private move ttt =
+    {ttt with Game = Game.move <| userMove ttt <| ttt.Game}
+
+let private doTurn = move >> present
 
 let rec private loop ttt =
     match doTurn ttt with
@@ -45,6 +42,7 @@ let rec private loop ttt =
 
 let start (ui:UI) game =
     create ui (fun _ -> "") "X" "O"
+    |> present
     |> loop
 
 [<EntryPoint>]

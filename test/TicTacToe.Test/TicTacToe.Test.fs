@@ -11,6 +11,15 @@ open TicTacToe
 
 #nowarn "0760"
 
+let xWins = [1; 4; 2; 5; 3;]
+let draw = [1; 3; 7; 4; 9; 5; 6; 8; 2]
+
+let assertGameWasPresented output game move =
+    let game = Game.move move game
+    output.ToString()
+    |> should contain (Presenter.present game)
+    game
+
 [<TearDown>]
 let ``reset stdin and stdout`` () =
     resetIO()
@@ -35,7 +44,7 @@ let ``create initializes a new TicTacToe record`` () =
 let ``the winner is shown on the UI`` () =
     let output = new StringWriter() |> patchStdOut
 
-    System.String.Join("\n", [1; 4; 2; 5; 3;])
+    System.String.Join("\n", xWins)
     |> StringReader
     |> patchStdIn
     |> ignore
@@ -48,7 +57,7 @@ let ``the winner is shown on the UI`` () =
 let ``Draw is shown if there is no winner`` () =
     let output = new StringWriter() |> patchStdOut
 
-    System.String.Join("\n", [1; 3; 7; 4; 9; 5; 6; 8; 2])
+    System.String.Join("\n", draw)
     |> StringReader
     |> patchStdIn
     |> ignore
@@ -62,12 +71,15 @@ let ``Draw is shown if there is no winner`` () =
 let ``the board is presented after each move`` () =
     let output = new StringWriter() |> patchStdOut
 
-    System.String.Join("\n", [1; 3; 7; 4; 9; 5; 6; 8; 2])
+    System.String.Join("\n", draw)
     |> StringReader
     |> patchStdIn
     |> ignore
 
     TicTacToe.start <| new Console.Console() <| Game.create "X" "O" |> ignore
 
-    output.ToString() |> should contain "Draw"
-    output.ToString() |> should not' (contain "X wins!")
+    let game = Game.create "X" "O"
+
+    draw
+    |> List.fold (assertGameWasPresented output) game
+    |> ignore
