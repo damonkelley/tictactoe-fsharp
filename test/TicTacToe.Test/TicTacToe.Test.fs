@@ -20,12 +20,26 @@ let assertGameWasPresented output game move =
     |> should contain (Presenter.present game)
     game
 
+let startTicTacToe () =
+    TicTacToe.create <| Console.Console() <| Presenter.present <| Game.create "X" "O"
+    |> TicTacToe.start
+    |> ignore
+
+let setupFakeConsole (moves:int list) =
+    System.String.Join("\n", moves)
+    |> StringReader
+    |> patchStdIn
+    |> ignore
+
+    new StringWriter() |> patchStdOut
+
 [<TearDown>]
 let ``reset stdin and stdout`` () =
     resetIO()
 
 [<Test>]
 let ``create initializes a new TicTacToe record`` () =
+    let game = Game.create "X" "O"
     let presenter game = ""
     let console = Console.Console()
 
@@ -35,51 +49,34 @@ let ``create initializes a new TicTacToe record`` () =
         ; Presenter = presenter
         }
 
-    let actual = TicTacToe.create console presenter "X" "O"
+    let actual = TicTacToe.create console presenter game
 
     expected.UI |> shouldEqual <| actual.UI
     expected.Game |> shouldEqual <| actual.Game
 
 [<Test>]
 let ``the winner is shown on the UI`` () =
-    let output = new StringWriter() |> patchStdOut
+    let output = setupFakeConsole xWins
 
-    System.String.Join("\n", xWins)
-    |> StringReader
-    |> patchStdIn
-    |> ignore
-
-    TicTacToe.start <| new Console.Console() <| Game.create "X" "O" |> ignore
+    startTicTacToe()
 
     output.ToString() |> should contain "X wins!"
 
 [<Test>]
 let ``Draw is shown if there is no winner`` () =
-    let output = new StringWriter() |> patchStdOut
+    let output = setupFakeConsole draw
 
-    System.String.Join("\n", draw)
-    |> StringReader
-    |> patchStdIn
-    |> ignore
-
-    TicTacToe.start <| new Console.Console() <| Game.create "X" "O" |> ignore
+    startTicTacToe()
 
     output.ToString() |> should contain "Draw"
     output.ToString() |> should not' (contain "X wins!")
 
 [<Test>]
 let ``the board is presented after each move`` () =
-    let output = new StringWriter() |> patchStdOut
+    let output = setupFakeConsole draw
 
-    System.String.Join("\n", draw)
-    |> StringReader
-    |> patchStdIn
-    |> ignore
-
-    TicTacToe.start <| new Console.Console() <| Game.create "X" "O" |> ignore
-
-    let game = Game.create "X" "O"
+    startTicTacToe()
 
     draw
-    |> List.fold (assertGameWasPresented output) game
+    |> List.fold (assertGameWasPresented output) (Game.create "X" "O")
     |> ignore

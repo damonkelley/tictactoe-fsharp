@@ -8,11 +8,13 @@ type TicTacToe =
     { UI : UI
     ; Game : Game
     ; Presenter : Game -> string
-}
+    }
 
-let create ui presenter p1 p2 =
+let prompt = "-> "
+
+let create ui presenter game =
     { UI = ui
-    ; Game = Game.create p1 p2
+    ; Game = game
     ; Presenter = presenter
     }
 
@@ -20,15 +22,15 @@ let private write ttt output =
     ttt.UI.Write(output) |> ignore
     ttt
 
-let private transformer =
-    toWhitelistedInteger << availableSpaces
+let private present ttt =
+    ttt.Presenter ttt.Game
+    |> write ttt
 
 let private userMove ttt =
-    ttt.UI.Prompt "-> " (transformer ttt.Game)
+    let transformer =
+        toWhitelistedInteger << availableSpaces
 
-let private present ttt =
-    Presenter.present ttt.Game
-    |> write ttt
+    ttt.UI.Prompt prompt <| transformer ttt.Game
 
 let private move ttt =
     {ttt with Game = Game.move <| userMove ttt <| ttt.Game}
@@ -40,12 +42,14 @@ let rec private loop ttt =
     | {Game = {Outcome = InProgress}} as ttt -> loop ttt
     | ttt -> ttt
 
-let start (ui:UI) game =
-    create ui (fun _ -> "") "X" "O"
-    |> present
-    |> loop
+let start = present >> loop
+
+let private exitCode _ =
+    0
 
 [<EntryPoint>]
 let main argv =
-    start <| Console.Console() <| Game.create "X" "O" |> ignore
-    0 // return an integer exit code
+    Game.create "X" "O"
+    |> create (Console.Console()) (Presenter.present)
+    |> start
+    |> exitCode
