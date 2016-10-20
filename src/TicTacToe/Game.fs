@@ -1,5 +1,7 @@
 module Game
 
+open Board
+
 type Outcome =
     | Winner of Player.Player
     | Draw
@@ -24,7 +26,7 @@ let availableSpaces game =
 
 let private allMarkersMatch markers =
     match markers with
-    | Board.Marker a :: Board.Marker b :: Board.Marker c :: xs when a = b && b = c -> Some a
+    | Marker a :: Marker b :: Marker c :: xs when a = b && b = c -> Some a
     | _ -> None
 
 let private onlyMarkers partition =
@@ -51,10 +53,3 @@ let move space game =
     {game with Board = Board.move space game.Turn game.Board;}
     |> updateOutcome
     |> swapTurn
-
-let private playWithMoves game moves =
-    moves
-    |> List.fold (fun game m -> move m game) game
-
-let play = function
-    | game, moves -> playWithMoves game moves

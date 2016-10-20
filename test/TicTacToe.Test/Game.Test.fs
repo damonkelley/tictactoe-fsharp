@@ -138,17 +138,3 @@ let ``availableSpaces collects only the empty spaces`` () =
     |> move 5
     |> Game.availableSpaces
     |> shouldEqual <| [1; 2; 3; 6; 7; 8; 9]
-
-[<Test>]
-let ``play plays the game with a move list`` () =
-    let playedGame = play (game, [1; 4; 2; 5; 3])
-
-    let expectedGame =
-        game
-        |> move 1
-        |> move 4
-        |> move 2
-        |> move 5
-        |> move 3
-
-    playedGame |> shouldEqual expectedGame
