@@ -8,23 +8,32 @@ let game = Game.create "X" "O"
 
 let xWins game =
     game
-    |> move 1 "X"
-    |> move 4 "O"
-    |> move 2 "X"
-    |> move 5 "O"
-    |> move 3 "X"
+    |> move 1 // X
+    |> move 4 // O
+    |> move 2
+    |> move 5
+    |> move 3
+
+let oWins game =
+    game
+    |> move 1 // X
+    |> move 4 // O
+    |> move 3
+    |> move 5
+    |> move 7
+    |> move 6
 
 let draw game =
     game
-    |> move 1 "X"
-    |> move 3 "O"
-    |> move 7 "X"
-    |> move 4 "O"
-    |> move 9 "X"
-    |> move 5 "O"
-    |> move 6 "X"
-    |> move 8 "O"
-    |> move 2 "X"
+    |> move 1 // X
+    |> move 3 // O
+    |> move 7
+    |> move 4
+    |> move 9
+    |> move 5
+    |> move 6
+    |> move 8
+    |> move 2
 
 [<Test>]
 let ``create makes a new Game record`` () =
@@ -67,30 +76,22 @@ let ``swapTurn swaps the Turn`` () =
 
 [<Test>]
 let ``move updates the outcome`` () =
-    game.Outcome |> should equal InProgress
-
     let game = game |> xWins
-
     game.Outcome |> should equal <| Winner "X"
 
 [<Test>]
 let ``move updates the turn`` () =
-    game.Outcome |> should equal InProgress
-
-    let game = game |> move 1 "X"
-
+    let game = game |> move 1
     game.Turn |> should equal <| "O"
-
 
 [<Test>]
 let ``move updates the board`` () =
-    {game with Board = Board.move 1 "X" game.Board
-               Turn = "O"}
-        |> shouldEqual <| Game.move 1 "X" game
+    {game with Board = Board.move 1 "X" game.Board; Turn = "O"}
+        |> shouldEqual <| Game.move 1 game
 
-    {game with Board = Board.move 1 "O" game.Board
-               Turn = "O"}
-        |> shouldEqual <| Game.move 1 "O" game
+    let game = Game.create "O" "X"
+    {game with Board = Board.move 1 "O" game.Board; Turn = "X"}
+        |> shouldEqual <| Game.move 1 game
 
 [<Test>]
 let ``findWinner finds some winner`` () =
@@ -100,20 +101,18 @@ let ``findWinner finds some winner`` () =
     |> should equal <| Some "X"
 
     game
-    |> move 4 "O"
-    |> move 5 "O"
-    |> move 6 "O"
+    |> oWins
     |> findWinner
     |> should equal <| Some "O"
 
 [<Test>]
 let ``findWinner finds none when there is no winner`` () =
     game
-    |> move 1 "X"
-    |> move 4 "O"
-    |> move 2 "X"
-    |> move 5 "O"
-    |> move 9 "X"
+    |> move 1
+    |> move 4
+    |> move 2
+    |> move 5
+    |> move 9
     |> findWinner
     |> should equal None
 
@@ -132,8 +131,8 @@ let ``availableSpaces collects all spaces when the board is empty`` () =
 [<Test>]
 let ``availableSpaces collects only the empty spaces`` () =
     game
-    |> move 4 "X"
-    |> move 5 "O"
+    |> move 4
+    |> move 5
     |> Game.availableSpaces
     |> shouldEqual <| [1; 2; 3; 6; 7; 8; 9]
 
@@ -143,10 +142,10 @@ let ``play plays the game with a move list`` () =
 
     let expectedGame =
         game
-        |> move 1 "X"
-        |> move 4 "O"
-        |> move 2 "X"
-        |> move 5 "O"
-        |> move 3 "X"
+        |> move 1
+        |> move 4
+        |> move 2
+        |> move 5
+        |> move 3
 
     playedGame |> shouldEqual expectedGame

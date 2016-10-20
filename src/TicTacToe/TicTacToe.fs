@@ -28,6 +28,7 @@ let private userMove ttt =
     ttt.UI.Prompt "-> " (transformer ttt.Game)
 
 let private present ttt =
+    Presenter.present ttt.Game |> ttt.UI.Write |> ignore
     presentOutcome ttt
     |> ttt.UI.Write
     |> ignore
@@ -42,10 +43,11 @@ let rec private loop ttt =
     | {Game = {Outcome = InProgress}} as ttt -> loop ttt
     | ttt -> ttt
 
-let rec start (ui:UI) game =
+let start (ui:UI) game =
     create ui (fun _ -> "") "X" "O"
     |> loop
 
 [<EntryPoint>]
 let main argv =
+    start <| Console.Console() <| Game.create "X" "O" |> ignore
     0 // return an integer exit code

@@ -25,7 +25,7 @@ let ``present presents a board with markers`` () =
                      7 | 8 | O\n"
 
     Game.create "X" "O"
-    |> Game.move 5 "X"
-    |> Game.move 9 "O"
+    |> Game.move 5
+    |> Game.move 9
     |> Presenter.present
     |> shouldEqual expected

@@ -49,14 +49,14 @@ let swapTurn game =
     | {Turn = player; Players = p1, p2} when player = p1 -> {game with Turn = p2}
     | {Players = p1, _}                                  -> {game with Turn = p1}
 
-let move space player game =
-    {game with Board = Board.move space player game.Board;}
+let move space game =
+    {game with Board = Board.move space game.Turn game.Board;}
     |> updateOutcome
     |> swapTurn
 
-let rec private playWithMoves game moves =
+let private playWithMoves game moves =
     moves
-    |> List.fold (fun game m -> move m game.Turn game) game
+    |> List.fold (fun game m -> move m game) game
 
 let play = function
     | game, moves -> playWithMoves game moves
