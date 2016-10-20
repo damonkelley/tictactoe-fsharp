@@ -41,6 +41,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <Compile Include="Board.fs" />
+    <Compile Include="Player.fs" />
     <Compile Include="Game.fs" />
     <Compile Include="UI.fs" />
     <Compile Include="Console.fs" />

@@ -14,6 +14,8 @@ open TicTacToe
 let xWins = [1; 4; 2; 5; 3;]
 let draw = [1; 3; 7; 4; 9; 5; 6; 8; 2]
 
+let game = Game.create <| Player.create "X" <| Player.create "O"
+
 let assertGameWasPresented output game move =
     let game = Game.move move game
     output.ToString()
@@ -21,7 +23,7 @@ let assertGameWasPresented output game move =
     game
 
 let startTicTacToe () =
-    TicTacToe.create <| Console.Console() <| Presenter.present <| Game.create "X" "O"
+    TicTacToe.create <| Console.Console() <| Presenter.present <| game
     |> TicTacToe.start
     |> ignore
 
@@ -39,13 +41,12 @@ let ``reset stdin and stdout`` () =
 
 [<Test>]
 let ``create initializes a new TicTacToe record`` () =
-    let game = Game.create "X" "O"
     let presenter game = ""
     let console = Console.Console()
 
     let expected =
         { UI = console
-        ; Game = Game.create "X" "O"
+        ; Game = game
         ; Presenter = presenter
         }
 
@@ -78,5 +79,5 @@ let ``the board is presented after each move`` () =
     startTicTacToe()
 
     draw
-    |> List.fold (assertGameWasPresented output) (Game.create "X" "O")
+    |> List.fold (assertGameWasPresented output) game
     |> ignore

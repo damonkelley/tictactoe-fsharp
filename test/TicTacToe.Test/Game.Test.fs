@@ -4,7 +4,10 @@ open NUnit.Framework
 open FsUnit
 open TestHelpers
 
-let game = Game.create "X" "O"
+let player1 = Player.create "X"
+let player2 = Player.create "O"
+
+let game = Game.create player1 player2
 
 let xWins game =
     game
@@ -40,10 +43,10 @@ let ``create makes a new Game record`` () =
     let expectedGame =
         { Outcome = InProgress
         ; Board   = Board.create()
-        ; Players = "X", "O"
-        ; Turn    = "X"
+        ; Players = player1, player2
+        ; Turn    = player1
         }
-    Game.create "X" "O" |> should equal expectedGame
+    Game.create player1 player2 |> should equal expectedGame
 
 [<Test>]
 let ``updateOutcome checks for a winner`` () =
@@ -52,7 +55,7 @@ let ``updateOutcome checks for a winner`` () =
         |> xWins
         |> updateOutcome
 
-    game.Outcome |> should equal <| Winner "X"
+    game.Outcome |> should equal <| Winner player1
 
 [<Test>]
 let ``updateOutcome checks for a draw`` () =
@@ -67,30 +70,30 @@ let ``updateOutcome checks for a draw`` () =
 let ``swapTurn swaps the Turn`` () =
     game
     |> swapTurn
-    |> shouldEqual <| {game with Turn = "O"}
+    |> shouldEqual <| {game with Turn = player2}
 
     game
     |> swapTurn
     |> swapTurn
-    |> shouldEqual <| {game with Turn = "X"}
+    |> shouldEqual <| {game with Turn = player1}
 
 [<Test>]
 let ``move updates the outcome`` () =
     let game = game |> xWins
-    game.Outcome |> should equal <| Winner "X"
+    game.Outcome |> should equal <| Winner player1
 
 [<Test>]
 let ``move updates the turn`` () =
     let game = game |> move 1
-    game.Turn |> should equal <| "O"
+    game.Turn |> should equal <| player2
 
 [<Test>]
 let ``move updates the board`` () =
-    {game with Board = Board.move 1 "X" game.Board; Turn = "O"}
+    {game with Board = Board.move 1 player1 game.Board; Turn = player2}
         |> shouldEqual <| Game.move 1 game
 
-    let game = Game.create "O" "X"
-    {game with Board = Board.move 1 "O" game.Board; Turn = "X"}
+    let game = Game.create player2 player1
+    {game with Board = Board.move 1 player2 game.Board; Turn = player1}
         |> shouldEqual <| Game.move 1 game
 
 [<Test>]
@@ -98,12 +101,12 @@ let ``findWinner finds some winner`` () =
     game
     |> xWins
     |> findWinner
-    |> should equal <| Some "X"
+    |> shouldEqual <| Some player1
 
     game
     |> oWins
     |> findWinner
-    |> should equal <| Some "O"
+    |> shouldEqual <| Some player2
 
 [<Test>]
 let ``findWinner finds none when there is no winner`` () =

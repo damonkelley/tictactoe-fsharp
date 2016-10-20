@@ -49,7 +49,7 @@ let private exitCode _ =
 
 [<EntryPoint>]
 let main argv =
-    Game.create "X" "O"
+    Game.create <| Player.create "X" <| Player.create "O"
     |> create (Console.Console()) (Presenter.present)
     |> start
     |> exitCode

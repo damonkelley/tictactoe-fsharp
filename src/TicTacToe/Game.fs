@@ -1,17 +1,15 @@
 module Game
 
-type Player = string
-
 type Outcome =
-    | Winner of Player
+    | Winner of Player.Player
     | Draw
     | InProgress
 
 type Game =
     { Outcome: Outcome
-    ; Board:   Board.Board<Player>
-    ; Players: Player * Player
-    ; Turn:    Player
+    ; Board:   Board.Board<Player.Player>
+    ; Players: Player.Player * Player.Player
+    ; Turn:    Player.Player
     }
 
 let create playerOne playerTwo =

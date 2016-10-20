@@ -22,7 +22,7 @@ let private composeBoard spaces =
     List.fold accumlateBoardSections "" spaces
 
 let private presentSpace = function
-    | id, (Marker marker) -> (id, marker)
+    | id, (Marker (player:Player.Player)) -> (id, player.Marker)
     | id, Empty           -> (id, (sprintf "%i" id))
 
 let private presentBoard (game:Game.Game) =
@@ -33,8 +33,8 @@ let private presentBoard (game:Game.Game) =
 
 let private presentOutcome = function
     | {Game.Outcome = Game.Draw}        -> "Draw"
-    | {Game.Outcome = Game.Winner w}    -> sprintf "%s wins!" w
-    | {Game.Outcome = _; Game.Turn = p} -> sprintf "%s is up!" p
+    | {Game.Outcome = Game.Winner w}    -> sprintf "%s wins!" w.Marker
+    | {Game.Outcome = _; Game.Turn = p} -> sprintf "%s is up!" p.Marker
 
 let private presentGame game =
     sprintf "%s\n%s\n" (presentBoard game) (presentOutcome game)
