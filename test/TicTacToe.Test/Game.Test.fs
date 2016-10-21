@@ -3,9 +3,10 @@ module Game.Test
 open NUnit.Framework
 open FsUnit
 open TestHelpers
+open TestDoubles
 
-let player1 = Player.create "X"
-let player2 = Player.create "O"
+let player1 = Player.create testStrategy "X"
+let player2 = Player.create testStrategy "O"
 
 let game = Game.create player1 player2
 

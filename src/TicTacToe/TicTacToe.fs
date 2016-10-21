@@ -26,18 +26,12 @@ let private present ttt =
     ttt.Presenter ttt.Game
     |> write ttt
 
-let private humanMove (ui:UI) game =
-    let transformer =
-        toWhitelistedInteger << availableSpaces
-
-    ui.Prompt prompt <| transformer game
-
-let private userMove {Game = game; UI = ui} =
-    match game with
-    | {Turn = {Type = Human}} -> humanMove ui game
+let private human =
+    Strategy.human prompt
 
 let private move ttt =
-    {ttt with Game = Game.move <| userMove ttt <| ttt.Game}
+    let game = ttt.Game
+    {ttt with Game = Game.move <| ttt.Game.Turn.Strategy(game) <| ttt.Game}
 
 let private doTurn = move >> present
 
@@ -53,7 +47,10 @@ let private exitCode _ =
 
 [<EntryPoint>]
 let main argv =
-    Game.create <| Player.create "X" <| Player.create "O"
-    |> create (Console.Console()) (Presenter.present)
+    let ui = Console.Console()
+
+    (Player.create (human ui) "X", Player.create (human ui) "O")
+    ||> Game.create
+    |> create ui (Presenter.present)
     |> start
     |> exitCode

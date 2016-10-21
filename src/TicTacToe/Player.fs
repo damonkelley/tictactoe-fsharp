@@ -1,7 +1,7 @@
 module Player
 
-let create marker =
+let create strategy marker =
     { Marker = marker
     ; Type = Human
-    ; Strategy = (fun game -> 1)
+    ; Strategy = strategy
     }

@@ -3,6 +3,9 @@ module TestDoubles
 open UI
 open Console
 
+let testStrategy game =
+    1
+
 type TestUI(input:string) =
     inherit Console.Console() with
     let input = input

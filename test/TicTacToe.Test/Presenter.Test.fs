@@ -3,9 +3,12 @@ module Presenter.Test
 open NUnit.Framework
 open FsUnit
 open TestHelpers
-open Game.Test
+open TestDoubles
 
-let game = Game.create <| Player.create "X" <| Player.create "O"
+let game =
+    Game.create
+    <| Player.create testStrategy "X"
+    <| Player.create testStrategy "O"
 
 [<Test>]
 let ``presentFor presents the empty board`` () =
@@ -35,13 +38,13 @@ let ``presentFor presents a board with markers`` () =
 
 [<Test>]
 let ``presentFor presents player1 when it wins`` () =
-    {game with Game.Outcome = Winner <| Player.create "X"}
+    {game with Game.Outcome = Winner <| Player.create (fun _ -> 1) "X"}
     |> Presenter.presentFor Presenter.Outcome
     |> shouldEqual "X wins!"
 
 [<Test>]
 let ``presentFor presents player2 when it wins`` () =
-    {game with Game.Outcome = Winner <| Player.create "O"}
+    {game with Game.Outcome = Winner <| Player.create (fun _ -> 1) "O"}
     |> Presenter.presentFor Presenter.Outcome
     |> shouldEqual "O wins!"
 

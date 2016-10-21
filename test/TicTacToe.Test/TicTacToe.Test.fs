@@ -3,6 +3,7 @@ module TicTacToe.Test
 open NUnit.Framework
 open FsUnit
 open TestHelpers
+open TestDoubles
 
 open System.IO
 open System.Text
@@ -14,8 +15,6 @@ open TicTacToe
 let xWins = [1; 4; 2; 5; 3;]
 let draw = [1; 3; 7; 4; 9; 5; 6; 8; 2]
 
-let game = Game.create <| Player.create "X" <| Player.create "O"
-
 let assertGameWasPresented output game move =
     let game = Game.move move game
     output.ToString()
@@ -23,7 +22,11 @@ let assertGameWasPresented output game move =
     game
 
 let startTicTacToe () =
-    TicTacToe.create <| Console.Console() <| Presenter.present <| game
+    let ui = Console.Console()
+
+    (Player.create (Strategy.human "" ui) "X", Player.create (Strategy.human "" ui) "O")
+    ||> Game.create
+    |> TicTacToe.create (Console.Console()) (Presenter.present)
     |> TicTacToe.start
     |> ignore
 
@@ -43,6 +46,10 @@ let ``reset stdin and stdout`` () =
 let ``create initializes a new TicTacToe record`` () =
     let presenter game = ""
     let console = Console.Console()
+    let game =
+        Game.create
+        <| Player.create testStrategy "X"
+        <| Player.create testStrategy "O"
 
     let expected =
         { UI = console
@@ -78,6 +85,11 @@ let ``the board is presented after each move`` () =
 
     startTicTacToe()
 
+    let newGame =
+        Game.create
+        <| Player.create testStrategy "X"
+        <| Player.create testStrategy "O"
+
     draw
-    |> List.fold (assertGameWasPresented output) game
+    |> List.fold (assertGameWasPresented output) newGame
     |> ignore
