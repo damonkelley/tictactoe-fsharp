@@ -2,16 +2,16 @@ module Game
 
 open Board
 
-type Outcome =
-    | Winner of Player.Player
+type Outcome<'a> =
+    | Winner of 'a
     | Draw
     | InProgress
 
 type Game =
-    { Outcome: Outcome
-    ; Board:   Board.Board<Player.Player>
-    ; Players: Player.Player * Player.Player
-    ; Turn:    Player.Player
+    { Outcome: Outcome<Player.Player<Game>>
+    ; Board:   Board.Board<Player.Player<Game>>
+    ; Players: Player.Player<Game> * Player.Player<Game>
+    ; Turn:    Player.Player<Game>
     }
 
 let create playerOne playerTwo =

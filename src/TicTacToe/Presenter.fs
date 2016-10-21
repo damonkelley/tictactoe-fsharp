@@ -22,7 +22,7 @@ let private composeBoard spaces =
     List.fold accumlateBoardSections "" spaces
 
 let private presentSpace = function
-    | id, (Marker (player:Player.Player)) -> (id, player.Marker)
+    | id, (Marker (player:Player.Player<Game.Game>)) -> (id, player.Marker)
     | id, Empty           -> (id, (sprintf "%i" id))
 
 let private presentBoard (game:Game.Game) =
