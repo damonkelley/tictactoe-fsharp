@@ -17,7 +17,7 @@ let ``create makes a new player record`` () =
 
 [<Test>]
 let ``players records are equal based on Marker and Type`` () =
-    let playerX = {Player.create "O" with Type = Player.Human}
-    let playerO = {Player.create "O" with Type = Player.Computer}
+    let playerX = {Player.create "O" with Type = Human}
+    let playerO = {Player.create "O" with Type = Computer}
 
     playerX |> should not' (equal playerO)

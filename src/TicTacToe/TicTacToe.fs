@@ -34,7 +34,7 @@ let private humanMove (ui:UI) game =
 
 let private userMove {Game = game; UI = ui} =
     match game with
-    | {Turn = {Type = Player.Human}} -> humanMove ui game
+    | {Turn = {Type = Human}} -> humanMove ui game
 
 let private move ttt =
     {ttt with Game = Game.move <| userMove ttt <| ttt.Game}

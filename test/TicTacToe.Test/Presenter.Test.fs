@@ -35,25 +35,25 @@ let ``presentFor presents a board with markers`` () =
 
 [<Test>]
 let ``presentFor presents player1 when it wins`` () =
-    {game with Game.Outcome = Game.Winner <| Player.create "X"}
+    {game with Game.Outcome = Winner <| Player.create "X"}
     |> Presenter.presentFor Presenter.Outcome
     |> shouldEqual "X wins!"
 
 [<Test>]
 let ``presentFor presents player2 when it wins`` () =
-    {game with Game.Outcome = Game.Winner <| Player.create "O"}
+    {game with Game.Outcome = Winner <| Player.create "O"}
     |> Presenter.presentFor Presenter.Outcome
     |> shouldEqual "O wins!"
 
 [<Test>]
 let ``presentFor presents the Draw outcome`` () =
-    {game with Game.Outcome = Game.Draw}
+    {game with Game.Outcome = Draw}
     |> Presenter.presentFor Presenter.Outcome
     |> shouldEqual "Draw"
 
 [<Test>]
 let ``presentFor presents the current players turn when the game is in progress`` () =
-    {game with Game.Outcome = Game.InProgress}
+    {game with Game.Outcome = InProgress}
     |> Presenter.presentFor Presenter.Outcome
     |> shouldEqual "X is up!"
 

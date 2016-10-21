@@ -64,7 +64,7 @@ let ``updateOutcome checks for a draw`` () =
         |> draw
         |> updateOutcome
 
-    game.Outcome |> shouldEqual Game.Draw
+    game.Outcome |> shouldEqual Draw
 
 [<Test>]
 let ``swapTurn swaps the Turn`` () =

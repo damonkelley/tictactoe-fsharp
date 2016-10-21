@@ -2,18 +2,6 @@ module Game
 
 open Board
 
-type Outcome<'a> =
-    | Winner of 'a
-    | Draw
-    | InProgress
-
-type Game =
-    { Outcome: Outcome<Player.Player<Game>>
-    ; Board:   Board.Board<Player.Player<Game>>
-    ; Players: Player.Player<Game> * Player.Player<Game>
-    ; Turn:    Player.Player<Game>
-    }
-
 let create playerOne playerTwo =
     { Outcome  = InProgress
     ; Board    = Board.create()
@@ -22,7 +10,7 @@ let create playerOne playerTwo =
     }
 
 let availableSpaces game =
-    Board.collect (Board.Empty, game.Board)
+    Board.collect (Vacant, game.Board)
 
 let private allMarkersMatch markers =
     match markers with
@@ -30,7 +18,7 @@ let private allMarkersMatch markers =
     | _ -> None
 
 let private onlyMarkers partition =
-    not <| List.contains Board.Empty partition
+    not <| List.contains Vacant partition
 
 let findWinner game =
     game.Board

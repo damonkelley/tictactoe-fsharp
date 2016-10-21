@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="GameTypes.fs" />
     <Compile Include="UI.fs" />
     <Compile Include="InputTransformer.fs" />
     <Compile Include="Board.fs" />
