@@ -10,8 +10,6 @@ type TicTacToe =
     ; Presenter : Game -> string
     }
 
-let prompt = "-> "
-
 let create ui presenter game =
     { UI = ui
     ; Game = game
@@ -23,15 +21,14 @@ let private write ttt output =
     ttt
 
 let private present ttt =
+    ttt.UI.Update() |> ignore
     ttt.Presenter ttt.Game
     |> write ttt
 
-let private human =
-    Strategy.human prompt
-
 let private move ttt =
     let game = ttt.Game
-    {ttt with Game = Game.move <| ttt.Game.Turn.Strategy(game) <| ttt.Game}
+    let {Turn = player } = game
+    {ttt with Game = Game.move <| player.Strategy(game) <| game}
 
 let private doTurn = move >> present
 
@@ -45,12 +42,13 @@ let start = present >> loop
 let private exitCode _ =
     0
 
+let withSetup () =
+    let config = Setup.run(Console.Console())
+
+    Game.create config.Player1 config.Player2
+    |> create config.UI Presenter.present
+    |> start
+
 [<EntryPoint>]
 let main argv =
-    let ui = Console.Console()
-
-    (Player.create (human ui) "X", Player.create (human ui) "O")
-    ||> Game.create
-    |> create ui (Presenter.present)
-    |> start
-    |> exitCode
+    withSetup() |> exitCode

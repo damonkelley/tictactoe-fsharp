@@ -30,8 +30,8 @@ let startTicTacToe () =
     |> TicTacToe.start
     |> ignore
 
-let setupFakeConsole (moves:int list) =
-    System.String.Join("\n", moves)
+let setupFakeConsole (input:string list) =
+    System.String.Join("\n", input)
     |> StringReader
     |> patchStdIn
     |> ignore
@@ -64,7 +64,7 @@ let ``create initializes a new TicTacToe record`` () =
 
 [<Test>]
 let ``the winner is shown on the UI`` () =
-    let output = setupFakeConsole xWins
+    let output = setupFakeConsole <| List.map (sprintf "%d") xWins
 
     startTicTacToe()
 
@@ -72,7 +72,7 @@ let ``the winner is shown on the UI`` () =
 
 [<Test>]
 let ``Draw is shown if there is no winner`` () =
-    let output = setupFakeConsole draw
+    let output = setupFakeConsole <| List.map (sprintf "%d") draw
 
     startTicTacToe()
 
@@ -81,7 +81,7 @@ let ``Draw is shown if there is no winner`` () =
 
 [<Test>]
 let ``the board is presented after each move`` () =
-    let output = setupFakeConsole draw
+    let output = setupFakeConsole <| List.map (sprintf "%d") draw
 
     startTicTacToe()
 
@@ -93,3 +93,17 @@ let ``the board is presented after each move`` () =
     draw
     |> List.fold (assertGameWasPresented output) newGame
     |> ignore
+
+[<Test>]
+let ``withSetup presents setup options before starting the game`` () =
+    let output =
+        draw
+        |> List.map (sprintf "%d")
+        |> List.append ["h"; "h"]
+        |> setupFakeConsole
+
+    TicTacToe.withSetup() |> ignore
+
+    output.ToString() |> should contain "Player 1 Type - Human or Computer?"
+    output.ToString() |> should contain "Player 2 Type - Human or Computer?"
+    output.ToString() |> should contain "Draw"
