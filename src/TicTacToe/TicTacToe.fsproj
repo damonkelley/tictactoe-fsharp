@@ -49,6 +49,7 @@
     <Compile Include="Console.fs" />
     <Compile Include="Strategy.fs" />
     <Compile Include="Presenter.fs" />
+    <Compile Include="Setup.fs" />
     <Compile Include="TicTacToe.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
