@@ -139,3 +139,43 @@ let ``availableSpaces collects only the empty spaces`` () =
     |> move 5
     |> Game.availableSpaces
     |> shouldEqual <| [1; 2; 3; 6; 7; 8; 9]
+
+type MoveContainer(moves) =
+    member val Moves = moves with get,set
+    member this.Next() =
+        match this.Moves with
+        | m :: xs -> this.Moves <- xs; m
+        | _ -> failwith "No more moves"
+
+let queueStrategy (moves:MoveContainer) game =
+    moves.Next()
+
+[<Test>]
+let ``play returns the game when there is a winner`` () =
+    let xStrategy = queueStrategy (MoveContainer [1; 2; 3])
+    let oStrategy = queueStrategy (MoveContainer [4; 5; 6])
+
+    let player1 = Player.create xStrategy "X"
+    let player2 = Player.create oStrategy "O"
+
+    let game =
+        Game.create player1 player2
+        |> Game.play
+
+    match game with
+    | {Outcome = Winner w }-> w |> shouldEqual player1
+    | _ -> failwith "Player 1 should be the winner."
+
+[<Test>]
+let ``play returns the game when there is a draw`` () =
+    let xStrategy = queueStrategy (MoveContainer [1; 7; 9; 6; 2])
+    let oStrategy = queueStrategy (MoveContainer [3; 4; 5; 8])
+
+    let player1 = Player.create xStrategy "X"
+    let player2 = Player.create oStrategy "O"
+
+    let game =
+        Game.create player1 player2
+        |> Game.play
+
+    game.Outcome |> shouldEqual Draw

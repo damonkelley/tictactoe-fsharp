@@ -41,3 +41,15 @@ let move space game =
     {game with Board = Board.move space game.Turn game.Board;}
     |> updateOutcome
     |> swapTurn
+
+let private doPlayerMove game =
+    let {Turn = player} = game
+    move (player.Strategy game) game
+
+let rec private loop game =
+    match doPlayerMove game with
+    | {Outcome = InProgress} as game -> loop game
+    | game -> game
+
+let play game =
+    loop game
