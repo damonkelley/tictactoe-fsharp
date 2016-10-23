@@ -9,11 +9,11 @@ type Configuration =
     }
 
 let private playerTypePrompt =
-    sprintf "Player %d Type - Human or Computer? (h/c)"
+    sprintf "Player %d Type - Human or Computer? (h/c) "
 
 let (|Human|_|) (ui, playerType) =
     match playerType with
-    | Some "h" -> Some (Strategy.human "" ui)
+    | Some "h" -> Some (Strategy.human ui)
     | _        -> None
 
 let (|Computer|_|) (_, playerType) =

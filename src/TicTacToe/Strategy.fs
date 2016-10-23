@@ -9,6 +9,6 @@ let randomSpace game =
 
     available.Item (random.Next <| available.Length)
 
-let human prompt (ui:UI) game =
+let human (ui:UI) game =
     let transformer = toWhitelistedInteger << Game.availableSpaces
-    ui.Prompt prompt <| transformer game
+    ui.Prompt "" (transformer game)

@@ -24,7 +24,7 @@ let assertGameWasPresented output game move =
 let startTicTacToe () =
     let ui = Console.Console()
 
-    (Player.create (Strategy.human "" ui) "X", Player.create (Strategy.human "" ui) "O")
+    (Player.create (Strategy.human ui) "X", Player.create (Strategy.human ui) "O")
     ||> Game.create
     |> TicTacToe.create (Console.Console()) (Presenter.present)
     |> TicTacToe.start

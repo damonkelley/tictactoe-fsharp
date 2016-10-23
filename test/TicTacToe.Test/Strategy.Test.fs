@@ -28,8 +28,8 @@ let ``random strategy will choose a random available board space`` () =
 
 [<Test>]
 let ``human strategy will get the input from stdin`` () =
-    Strategy.human "-> " (TestUI("1")) game
+    Strategy.human (TestUI("1")) game
         |> should equal 1
 
-    Strategy.human "-> " (TestUI("2")) game
+    Strategy.human (TestUI("2")) game
         |> should equal 2

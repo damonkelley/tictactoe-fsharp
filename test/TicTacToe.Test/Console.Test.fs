@@ -51,7 +51,7 @@ let ``Prompt will prompt for input from stdin`` () =
     console.Prompt "How old are you?" id
     |> should equal "5"
 
-    output.ToString() |> should contain "How old are you? "
+    output.ToString() |> should contain "How old are you?"
 
 [<Test>]
 let ``Prompt uses a transformer to validate and parse the input`` () =
@@ -79,7 +79,7 @@ let ``Prompt will continue to prompt until Some value is returned`` () =
     console.Prompt "->" transformer
     |> should equal <| "success!"
 
-    output.ToString() |> should contain <| "-> -> -> "
+    output.ToString() |> should contain <| "->->->"
 
 [<Test>]
 let ``Update will clear the screen`` () =
