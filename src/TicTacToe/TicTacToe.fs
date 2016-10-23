@@ -16,31 +16,13 @@ let create ui presenter game =
     ; Presenter = presenter
     }
 
-let private write ttt output =
-    ttt.UI.Write(output) |> ignore
-    ttt
-
-let private present ttt =
+let private view ttt game =
     ttt.UI.Update() |> ignore
-    ttt.Presenter ttt.Game
-    |> write ttt
+    game |> ttt.Presenter |> ttt.UI.Write |> ignore
+    game
 
-let private move ttt =
-    let game = ttt.Game
-    let {Turn = player } = game
-    {ttt with Game = Game.move <| player.Strategy(game) <| game}
-
-let private doTurn = move >> present
-
-let rec private loop ttt =
-    match doTurn ttt with
-    | {Game = {Outcome = InProgress}} as ttt -> loop ttt
-    | ttt -> ttt
-
-let start = present >> loop
-
-let private exitCode _ =
-    0
+let start ttt =
+    Game.play (view ttt) ttt.Game
 
 let withSetup () =
     let config = Setup.run(Console.Console())
@@ -48,6 +30,9 @@ let withSetup () =
     Game.create config.Player1 config.Player2
     |> create config.UI Presenter.present
     |> start
+
+let private exitCode _ =
+    0
 
 [<EntryPoint>]
 let main argv =
