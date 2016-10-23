@@ -3,6 +3,7 @@ module TicTacToe.Test
 open NUnit.Framework
 open FsUnit
 open TestHelpers
+open TestDoubles
 
 open System.IO
 open System.Text
@@ -21,12 +22,16 @@ let assertGameWasPresented output game move =
     game
 
 let startTicTacToe () =
-    TicTacToe.create <| Console.Console() <| Presenter.present <| Game.create "X" "O"
+    let ui = Console.Console()
+
+    (Player.create (Strategy.human ui) "X", Player.create (Strategy.human ui) "O")
+    ||> Game.create
+    |> TicTacToe.create (Console.Console()) (Presenter.present)
     |> TicTacToe.start
     |> ignore
 
-let setupFakeConsole (moves:int list) =
-    System.String.Join("\n", moves)
+let setupFakeConsole (input:string list) =
+    System.String.Join("\n", input)
     |> StringReader
     |> patchStdIn
     |> ignore
@@ -39,13 +44,16 @@ let ``reset stdin and stdout`` () =
 
 [<Test>]
 let ``create initializes a new TicTacToe record`` () =
-    let game = Game.create "X" "O"
     let presenter game = ""
     let console = Console.Console()
+    let game =
+        Game.create
+        <| Player.create testStrategy "X"
+        <| Player.create testStrategy "O"
 
     let expected =
         { UI = console
-        ; Game = Game.create "X" "O"
+        ; Game = game
         ; Presenter = presenter
         }
 
@@ -56,7 +64,7 @@ let ``create initializes a new TicTacToe record`` () =
 
 [<Test>]
 let ``the winner is shown on the UI`` () =
-    let output = setupFakeConsole xWins
+    let output = setupFakeConsole <| List.map (sprintf "%d") xWins
 
     startTicTacToe()
 
@@ -64,7 +72,7 @@ let ``the winner is shown on the UI`` () =
 
 [<Test>]
 let ``Draw is shown if there is no winner`` () =
-    let output = setupFakeConsole draw
+    let output = setupFakeConsole <| List.map (sprintf "%d") draw
 
     startTicTacToe()
 
@@ -73,10 +81,29 @@ let ``Draw is shown if there is no winner`` () =
 
 [<Test>]
 let ``the board is presented after each move`` () =
-    let output = setupFakeConsole draw
+    let output = setupFakeConsole <| List.map (sprintf "%d") draw
 
     startTicTacToe()
 
+    let newGame =
+        Game.create
+        <| Player.create testStrategy "X"
+        <| Player.create testStrategy "O"
+
     draw
-    |> List.fold (assertGameWasPresented output) (Game.create "X" "O")
+    |> List.fold (assertGameWasPresented output) newGame
     |> ignore
+
+[<Test>]
+let ``withSetup presents setup options before starting the game`` () =
+    let output =
+        draw
+        |> List.map (sprintf "%d")
+        |> List.append ["h"; "h"]
+        |> setupFakeConsole
+
+    TicTacToe.withSetup() |> ignore
+
+    output.ToString() |> should contain "Player 1 Type - Human or Computer?"
+    output.ToString() |> should contain "Player 2 Type - Human or Computer?"
+    output.ToString() |> should contain "Draw"

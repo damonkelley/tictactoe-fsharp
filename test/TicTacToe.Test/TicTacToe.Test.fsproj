@@ -46,11 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestHelpers.fs" />
+    <Compile Include="TestDoubles.fs" />
     <Compile Include="Board.Test.fs" />
+    <Compile Include="Player.Test.fs" />
     <Compile Include="Game.Test.fs" />
     <Compile Include="Console.Test.fs" />
+    <Compile Include="Strategy.Test.fs" />
     <Compile Include="InputTransformer.Test.fs" />
     <Compile Include="Presenter.Test.fs" />
+    <Compile Include="Setup.Test.fs" />
     <Compile Include="TicTacToe.Test.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

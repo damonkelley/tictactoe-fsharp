@@ -1,18 +1,6 @@
 module Game
 
-type Player = string
-
-type Outcome =
-    | Winner of Player
-    | Draw
-    | InProgress
-
-type Game =
-    { Outcome: Outcome
-    ; Board:   Board.Board<Player>
-    ; Players: Player * Player
-    ; Turn:    Player
-    }
+open Board
 
 let create playerOne playerTwo =
     { Outcome  = InProgress
@@ -22,15 +10,15 @@ let create playerOne playerTwo =
     }
 
 let availableSpaces game =
-    Board.collect (Board.Empty, game.Board)
+    Board.collect (Vacant, game.Board)
 
 let private allMarkersMatch markers =
     match markers with
-    | Board.Marker a :: Board.Marker b :: Board.Marker c :: xs when a = b && b = c -> Some a
+    | Marker a :: Marker b :: Marker c :: xs when a = b && b = c -> Some a
     | _ -> None
 
 let private onlyMarkers partition =
-    not <| List.contains Board.Empty partition
+    not <| List.contains Vacant partition
 
 let findWinner game =
     game.Board
@@ -54,9 +42,14 @@ let move space game =
     |> updateOutcome
     |> swapTurn
 
-let private playWithMoves game moves =
-    moves
-    |> List.fold (fun game m -> move m game) game
+let private doPlayerMove game =
+    let {Turn = player} = game
+    move (player.Strategy game) game
 
-let play = function
-    | game, moves -> playWithMoves game moves
+let rec private loop hook game =
+    match game |> doPlayerMove |> hook with
+    | {Outcome = InProgress} as game -> loop (hook) game
+    | game -> game
+
+let play hook game =
+     game |> hook |> (loop hook)

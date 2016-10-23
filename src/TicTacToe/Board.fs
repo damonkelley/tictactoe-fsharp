@@ -1,10 +1,7 @@
 module Board
 
-type Space<'a> = Marker of 'a | Empty
-type Board<'a> = Map<int, Space<'a>>
-
 let create () : Board<'a> =
-    [for i in [1..9] -> i, Empty] |> Map.ofList
+    [for i in [1..9] -> i, Vacant] |> Map.ofList
 
 let move (space:int) (marker:'a) (board:Board<'a>) : Board<'a> =
     Map.add space (Marker marker) board
@@ -12,16 +9,15 @@ let move (space:int) (marker:'a) (board:Board<'a>) : Board<'a> =
 let toList board =
     Map.toList board
 
-let private collectEmpty board =
+let private collectVacant board =
     board
     |> Map.toList
     |> List.choose (function
-                    | id, Empty -> Some id
+                    | id, Vacant -> Some id
                     | _, _ -> None)
 
-
 let collect = function
-    | (Empty), board -> collectEmpty board
+    | (Vacant), board -> collectVacant board
     | (Marker x), board -> []
 
 let private rows =

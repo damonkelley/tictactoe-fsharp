@@ -3,8 +3,12 @@ module Game.Test
 open NUnit.Framework
 open FsUnit
 open TestHelpers
+open TestDoubles
 
-let game = Game.create "X" "O"
+let player1 = Player.create testStrategy "X"
+let player2 = Player.create testStrategy "O"
+
+let game = Game.create player1 player2
 
 let xWins game =
     game
@@ -40,10 +44,10 @@ let ``create makes a new Game record`` () =
     let expectedGame =
         { Outcome = InProgress
         ; Board   = Board.create()
-        ; Players = "X", "O"
-        ; Turn    = "X"
+        ; Players = player1, player2
+        ; Turn    = player1
         }
-    Game.create "X" "O" |> should equal expectedGame
+    Game.create player1 player2 |> should equal expectedGame
 
 [<Test>]
 let ``updateOutcome checks for a winner`` () =
@@ -52,7 +56,7 @@ let ``updateOutcome checks for a winner`` () =
         |> xWins
         |> updateOutcome
 
-    game.Outcome |> should equal <| Winner "X"
+    game.Outcome |> should equal <| Winner player1
 
 [<Test>]
 let ``updateOutcome checks for a draw`` () =
@@ -61,36 +65,36 @@ let ``updateOutcome checks for a draw`` () =
         |> draw
         |> updateOutcome
 
-    game.Outcome |> should equal Draw
+    game.Outcome |> shouldEqual Draw
 
 [<Test>]
 let ``swapTurn swaps the Turn`` () =
     game
     |> swapTurn
-    |> shouldEqual <| {game with Turn = "O"}
+    |> shouldEqual <| {game with Turn = player2}
 
     game
     |> swapTurn
     |> swapTurn
-    |> shouldEqual <| {game with Turn = "X"}
+    |> shouldEqual <| {game with Turn = player1}
 
 [<Test>]
 let ``move updates the outcome`` () =
     let game = game |> xWins
-    game.Outcome |> should equal <| Winner "X"
+    game.Outcome |> should equal <| Winner player1
 
 [<Test>]
 let ``move updates the turn`` () =
     let game = game |> move 1
-    game.Turn |> should equal <| "O"
+    game.Turn |> should equal <| player2
 
 [<Test>]
 let ``move updates the board`` () =
-    {game with Board = Board.move 1 "X" game.Board; Turn = "O"}
+    {game with Board = Board.move 1 player1 game.Board; Turn = player2}
         |> shouldEqual <| Game.move 1 game
 
-    let game = Game.create "O" "X"
-    {game with Board = Board.move 1 "O" game.Board; Turn = "X"}
+    let game = Game.create player2 player1
+    {game with Board = Board.move 1 player2 game.Board; Turn = player1}
         |> shouldEqual <| Game.move 1 game
 
 [<Test>]
@@ -98,12 +102,12 @@ let ``findWinner finds some winner`` () =
     game
     |> xWins
     |> findWinner
-    |> should equal <| Some "X"
+    |> shouldEqual <| Some player1
 
     game
     |> oWins
     |> findWinner
-    |> should equal <| Some "O"
+    |> shouldEqual <| Some player2
 
 [<Test>]
 let ``findWinner finds none when there is no winner`` () =
@@ -136,16 +140,61 @@ let ``availableSpaces collects only the empty spaces`` () =
     |> Game.availableSpaces
     |> shouldEqual <| [1; 2; 3; 6; 7; 8; 9]
 
+type MoveContainer(moves) =
+    member val Moves = moves with get,set
+    member this.Next() =
+        match this.Moves with
+        | m :: xs -> this.Moves <- xs; m
+        | _ -> failwith "No more moves"
+
+let queueStrategy (moves:MoveContainer) game =
+    moves.Next()
+
 [<Test>]
-let ``play plays the game with a move list`` () =
-    let playedGame = play (game, [1; 4; 2; 5; 3])
+let ``play returns the game when there is a winner`` () =
+    let xStrategy = queueStrategy (MoveContainer [1; 2; 3])
+    let oStrategy = queueStrategy (MoveContainer [4; 5; 6])
 
-    let expectedGame =
+    let player1 = Player.create xStrategy "X"
+    let player2 = Player.create oStrategy "O"
+
+    let game =
+        Game.create player1 player2
+        |> Game.play (id)
+
+    match game with
+    | {Outcome = Winner w }-> w |> shouldEqual player1
+    | _ -> failwith "Player 1 should be the winner."
+
+[<Test>]
+let ``play returns the game when there is a draw`` () =
+    let xStrategy = queueStrategy (MoveContainer [1; 7; 9; 6; 2])
+    let oStrategy = queueStrategy (MoveContainer [3; 4; 5; 8])
+
+    let player1 = Player.create xStrategy "X"
+    let player2 = Player.create oStrategy "O"
+
+    let game =
+        Game.create player1 player2
+        |> Game.play (id)
+
+    game.Outcome |> shouldEqual Draw
+
+[<Test>]
+let ``play will accept a function that is executed around the game`` () =
+    let xStrategy = queueStrategy (MoveContainer [1; 2; 3])
+    let oStrategy = queueStrategy (MoveContainer [4; 5; 6])
+
+    let player1 = Player.create xStrategy "X"
+    let player2 = Player.create oStrategy "O"
+
+    let mutable playLog = ""
+    let logger game =
+        playLog <- playLog + game.Turn.Marker + " "
         game
-        |> move 1
-        |> move 4
-        |> move 2
-        |> move 5
-        |> move 3
 
-    playedGame |> shouldEqual expectedGame
+    let game =
+        Game.create player1 player2
+        |> Game.play (logger)
+
+    playLog |> shouldEqual "X O X O X O "

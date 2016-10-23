@@ -7,14 +7,14 @@ open TestHelpers
 [<Test>]
 let ``create a new board`` () =
     create()
-    |> Map.forall (fun k v -> match v with | Board.Empty -> true | _ -> false)
+    |> Map.forall (fun k v -> match v with | Vacant -> true | _ -> false)
     |> should equal <| true
 
 [<Test>]
 let ``move updates the board`` () =
     create()
     |> move 1 "X"
-    |> shouldEqual <| (create().Add(1, Board.Marker "X"))
+    |> shouldEqual <| (create().Add(1, Marker "X"))
 
 [<Test>]
 let ``toList returns a list of tuples`` () =
@@ -78,13 +78,13 @@ let ``the board can be partitioned into diagonals`` () =
     partitions.Length |> should equal 8
 
 [<Test>]
-let ``collect can get all of the space ids that are Empty`` () =
+let ``collect can get all of the space ids that are vacant`` () =
     let board = Board.create()
 
-    collect (Board.Empty, board)
+    collect (Vacant, board)
     |> shouldEqual [1; 2; 3; 4; 5; 6; 7; 8; 9]
 
     let board = board |> move 1 "X" |> move 2 "O"
 
-    collect (Board.Empty, board)
+    collect (Vacant, board)
     |> shouldEqual [3; 4; 5; 6; 7; 8; 9]
