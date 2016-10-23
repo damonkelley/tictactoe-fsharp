@@ -46,10 +46,10 @@ let private doPlayerMove game =
     let {Turn = player} = game
     move (player.Strategy game) game
 
-let rec private loop game =
-    match doPlayerMove game with
-    | {Outcome = InProgress} as game -> loop game
+let rec private loop hook game =
+    match game |> doPlayerMove |> hook with
+    | {Outcome = InProgress} as game -> loop (hook) game
     | game -> game
 
-let play game =
-    loop game
+let play hook game =
+     game |> hook |> (loop hook)

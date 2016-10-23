@@ -160,7 +160,7 @@ let ``play returns the game when there is a winner`` () =
 
     let game =
         Game.create player1 player2
-        |> Game.play
+        |> Game.play (id)
 
     match game with
     | {Outcome = Winner w }-> w |> shouldEqual player1
@@ -176,6 +176,25 @@ let ``play returns the game when there is a draw`` () =
 
     let game =
         Game.create player1 player2
-        |> Game.play
+        |> Game.play (id)
 
     game.Outcome |> shouldEqual Draw
+
+[<Test>]
+let ``play will accept a function that is executed around the game`` () =
+    let xStrategy = queueStrategy (MoveContainer [1; 2; 3])
+    let oStrategy = queueStrategy (MoveContainer [4; 5; 6])
+
+    let player1 = Player.create xStrategy "X"
+    let player2 = Player.create oStrategy "O"
+
+    let mutable playLog = ""
+    let logger game =
+        playLog <- playLog + game.Turn.Marker + " "
+        game
+
+    let game =
+        Game.create player1 player2
+        |> Game.play (logger)
+
+    playLog |> shouldEqual "X O X O X O "
