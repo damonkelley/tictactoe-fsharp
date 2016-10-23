@@ -21,7 +21,6 @@ type TestUI(input:string list) =
 
         member this.Write out =
             this.Output <- out :: this.Output
-            (this :> UI)
 
 [<Test>]
 let ``it prompts the user to indicate the type of player 1 and player 2`` () =

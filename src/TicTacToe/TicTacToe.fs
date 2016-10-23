@@ -17,8 +17,8 @@ let create ui presenter game =
     }
 
 let private view ttt game =
-    ttt.UI.Update() |> ignore
-    game |> ttt.Presenter |> ttt.UI.Write |> ignore
+    ttt.UI.Update()
+    game |> ttt.Presenter |> ttt.UI.Write
     game
 
 let start ttt =

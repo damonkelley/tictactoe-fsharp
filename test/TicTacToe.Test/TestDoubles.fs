@@ -12,5 +12,4 @@ type TestUI(input:string) =
 
     interface UI with
         member this.ReadLine() = Some input
-        member this.Write _ = (this :> UI)
-
+        member this.Write _ = ()
