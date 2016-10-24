@@ -9,6 +9,14 @@ let create playerOne playerTwo =
     ; Turn     = playerOne
     }
 
+let isOver = function
+    | {Outcome = InProgress} -> false
+    | _                      -> true
+
+let getWinner = function
+    | {Outcome = Winner w} -> Some w
+    | _ -> None
+
 let availableSpaces game =
     Board.collect (Vacant, game.Board)
 
