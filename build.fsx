@@ -47,10 +47,23 @@ Target "Test" (fun _ ->
     !! (testDir + "/**/bin/Debug/*.Test.dll")
     |> NUnit3 (fun p ->
             {p with
+                Where = "cat!=Long";
                 ShadowCopy = true;
                 Labels = LabelsLevel.All;
                 ToolPath = "packages/NUnit.ConsoleRunner/tools/nunit3-console.exe"}))
 
+
+Target "LongTests" (fun _ ->
+    !! (testDir + "/**/bin/Debug/*.Test.dll")
+    |> NUnit3 (fun p ->
+            {p with
+                Where = "cat==Long";
+                ShadowCopy = true;
+                Labels = LabelsLevel.All;
+                ToolPath = "packages/NUnit.ConsoleRunner/tools/nunit3-console.exe"}))
+
+Target "AllTests" (fun _ ->
+    trace "Ran all tests")
 
 Target "Lint" (fun _ ->
     !! "**/**/*.fsproj"
@@ -61,6 +74,13 @@ Target "Deploy" (fun _ ->
     -- "*.zip"
     |> Zip buildDir (deployDir + "ApplicationName." + version + ".zip"))
 
+"BuildTest"
+  ==> "LongTests"
+  ==> "Build"
+
+"Test"
+  ==> "LongTests"
+  ==> "AllTests"
 
 "Clean"
   ==> "BuildTest"

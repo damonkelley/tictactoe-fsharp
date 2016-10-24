@@ -2,6 +2,7 @@ module Strategy.Test
 
 open NUnit.Framework
 open FsUnit
+open FsCheck
 open TestHelpers
 open TestDoubles
 
@@ -71,3 +72,32 @@ let ``computer never loses`` () =
     | {Outcome = Draw} -> ()
     | _ -> failwith (sprintf "Unexpected loss: %s" (Presenter.present game))
 
+
+type ComputerStrategyProperties =
+    static member ``computer strategy never loses as player 1 against randome player`` () =
+        let game =
+            Game.create
+            <| Player.create Strategy.computer "O"
+            <| Player.create Strategy.randomSpace "X"
+
+        match Game.play (id) game with
+        | {Outcome = Draw} -> true
+        | {Outcome = Winner {Marker = "O"}} -> true
+        | _ -> false
+
+    static member ``computer strategy never loses as player 2 against random player`` () =
+        let game =
+            Game.create
+            <| Player.create Strategy.randomSpace "X"
+            <| Player.create Strategy.computer "O"
+
+        match Game.play (id) game with
+        | {Outcome = Draw} -> true
+        | {Outcome = Winner {Marker = "O"}} -> true
+        | _ -> false
+
+[<Test>]
+[<Category("Long")>]
+let ``check properties of computer strategy`` () =
+    let config = {Config.QuickThrowOnFailure with MaxTest = 50}
+    Check.All<ComputerStrategyProperties> config
