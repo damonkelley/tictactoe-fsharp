@@ -15,7 +15,7 @@ let human (ui:UI) game =
 
 type Score =
     { Score : int
-    ; Space : int
+    ; Space : int option
     }
 
 let maxScore a b =
@@ -25,42 +25,40 @@ let minScore a b =
     if a.Score = (min a.Score b.Score) then a else b
 
 let setMove move score =
-    {score with Space = move}
+    {score with Space = Some move}
 
-let score (game, player, lastMove) depth =
-    match game with
-    | {Outcome = Winner winner} when player = winner  -> {Score = 10 + depth;  Space = lastMove}
-    | {Outcome = Winner _ }                           -> {Score = -10 - depth; Space = lastMove}
-    | _                                               -> {Score = 0;           Space = lastMove}
+let score game player depth =
+    match Game.getWinner game with
+    | Some winner when player = winner -> {Score = 10 + depth;  Space = None}
+    | Some _                           -> {Score = -10 - depth; Space = None}
+    | None                             -> {Score = 0;           Space = None}
 
-let rec minimax (game, player, lastMove) depth maximizingPlayer =
-    match game, depth, maximizingPlayer with
-    | {Outcome = InProgress}, _, true  -> forMaximizing (game, player, lastMove) depth
-    | {Outcome = InProgress}, _, false -> forMinimizing (game, player, lastMove) depth
-    | _, 0, _
-    | _, _, _                          -> score (game, player, lastMove) depth
+let rec minimax (game, player) depth maximize =
+    if Game.isOver game || depth = 0 then
+        score game player depth
+    else
+        match maximize with
+        | true  -> maximizeWin (game, player) depth
+        | false -> minimizeLoss (game, player) depth
 
-and forMinimizing (game, player, lastMove) depth =
-        let scoreMove acc move =
-            minimax (Game.move move game, player, move) (depth - 1) true
-            |> setMove move
-            |> minScore acc
+and minimizeLoss acc depth  =
+    scoreChildren acc depth false minScore {Space = None; Score = System.Int32.MaxValue}
 
-        game
-        |> Game.availableSpaces
-        |> List.fold scoreMove {Space = 0; Score = System.Int32.MaxValue}
+and maximizeWin acc depth  =
+    scoreChildren acc depth true maxScore {Space = None; Score = System.Int32.MinValue}
 
-and forMaximizing (game, player, lastMove) depth =
-        let scoreMove acc move =
-            minimax (Game.move move game, player, move) (depth - 1) false
-            |> setMove move
-            |> maxScore acc
+and scoreChildren (game, player) depth maximize comparator startingScore =
+    let scoreMove acc move =
+        minimax (Game.move move game, player) (depth - 1) (not maximize)
+        |> setMove move
+        |> comparator acc
 
-        game
-        |> Game.availableSpaces
-        |> List.fold scoreMove {Space = 0; Score = System.Int32.MinValue}
+    game
+    |> Game.availableSpaces
+    |> List.fold scoreMove startingScore
 
 let computer game =
-    let score = minimax (game, game.Turn, 0) 7 true
-    score.Space
+    match minimax (game, game.Turn) 7 true with
+    | {Space = Some move} -> move
+    | _ -> failwith "Unable to choose space"
 

@@ -50,6 +50,20 @@ let ``create makes a new Game record`` () =
     Game.create player1 player2 |> should equal expectedGame
 
 [<Test>]
+let ``isOver determines if the game is over or not`` () =
+    game |> xWins  |> Game.isOver |> should equal true
+    game |> oWins  |> Game.isOver |> should equal true
+    game |> draw   |> Game.isOver |> should equal true
+    game |> move 1 |> Game.isOver |> should equal false
+
+[<Test>]
+let ``getWinner might return the winner`` () =
+    game |> xWins  |> Game.getWinner |> shouldEqual (Some player1)
+    game |> oWins  |> Game.getWinner |> shouldEqual (Some player2)
+    game |> draw   |> Game.getWinner |> shouldEqual  None
+    game |> move 1 |> Game.getWinner |> shouldEqual  None
+
+[<Test>]
 let ``updateOutcome checks for a winner`` () =
     let game =
         game
