@@ -33,3 +33,41 @@ let ``human strategy will get the input from stdin`` () =
 
     Strategy.human (TestUI("2")) game
         |> should equal 2
+
+[<Test>]
+let ``computer strategy will find the winning move`` () =
+    let game =
+        game
+        |> Game.move 1
+        |> Game.move 4
+        |> Game.move 2
+        |> Game.move 5
+
+    Strategy.computer game |> should equal 3
+
+[<Test>]
+let ``computer strategy will prevent a loss`` () =
+    let game =
+        game
+        |> Game.move 1
+        |> Game.move 5
+        |> Game.move 7
+        |> Game.move 4
+
+    Strategy.computer game |> should equal 6
+
+[<Test>]
+let ``computer never loses`` () =
+    let game =
+        Game.create
+        <| Player.create Strategy.randomSpace "X"
+        <| Player.create Strategy.computer "O"
+
+    let hook game = printfn "%s" (Presenter.present game); game
+    let game = Game.play (id) game
+
+    match game with
+    | {Outcome = Winner {Marker = "O"}} -> ()
+    | {Outcome = Draw} -> ()
+    | _ -> failwith (sprintf "Unexpected loss: %s" (Presenter.present game))
+
