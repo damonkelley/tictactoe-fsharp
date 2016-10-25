@@ -18,7 +18,7 @@ let (|Human|_|) (ui, playerType) =
 
 let (|Computer|_|) (_, playerType) =
     match playerType with
-    | Some "c" -> Some Strategy.randomSpace
+    | Some "c" -> Some Strategy.computer
     | _        -> None
 
 let private toPlayer ui playerType =
