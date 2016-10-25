@@ -24,11 +24,11 @@ let ``presentFor presents the empty board`` () =
 
 [<Test>]
 let ``presentFor presents a board with markers`` () =
-    let expected = " 1 | 2 | 3\n\
-                    ---+---+---\n \
-                     4 | X | 6\n\
-                    ---+---+---\n \
-                     7 | 8 | O\n"
+    let (player1, player2) = game.Players
+    let expected =
+        sprintf " 1 | 2 | 3\n---+---+---\n 4 | %s | 6\n---+---+---\n 7 | 8 | %s\n"
+        <| colorize player1.Marker
+        <| colorize player2.Marker
 
     game
     |> Game.move 5

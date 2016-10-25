@@ -8,6 +8,18 @@ let rowSeparator = "---+---+---\n"
 let newline = "\n"
 let pipe = "|"
 
+let colors =
+    Map.ofList [ (0, (sprintf "\x1b[31m%s\x1b[0m"))
+               ; (1, (sprintf "\x1b[32m%s\x1b[0m"))
+               ; (2, (sprintf "\x1b[33m%s\x1b[0m"))
+               ; (3, (sprintf "\x1b[34m%s\x1b[0m"))
+               ; (4, (sprintf "\x1b[35m%s\x1b[0m"))
+               ; (5, (sprintf "\x1b[36m%s\x1b[0m"))]
+
+let colorize marker =
+    let colorCode = (hash marker) % colors.Count
+    (Map.find colorCode colors) marker
+
 let private sectionFor space =
     match  space with
     | 3, s
@@ -22,8 +34,8 @@ let private composeBoard spaces =
     List.fold accumlateBoardSections "" spaces
 
 let private presentSpace = function
-    | id, (Marker (player:Player<Game>)) -> (id, player.Marker)
-    | id, Empty           -> (id, (sprintf "%i" id))
+    | id, (Marker (player:Player<Game>)) -> (id, (colorize player.Marker))
+    | id, Vacant           -> (id, (sprintf "%i" id))
 
 let private presentBoard (game:Game) =
     game.Board
