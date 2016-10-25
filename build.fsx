@@ -76,7 +76,6 @@ Target "Deploy" (fun _ ->
 
 "BuildTest"
   ==> "LongTests"
-  ==> "Build"
 
 "Test"
   ==> "LongTests"
