@@ -21,8 +21,13 @@ let private view ttt game =
     game |> ttt.Presenter |> ttt.UI.Write
     game
 
-let start ttt =
-    Game.play (view ttt) ttt.Game
+let rec start ttt =
+    Game.play (view ttt) ttt.Game |> ignore
+    playAgain ttt
+
+and playAgain ttt =
+    let anotherRound = ttt.UI.Prompt "Play again? (y/n): " confirm
+    if anotherRound then start ttt else ttt
 
 let withSetup () =
     let config = Setup.run(Console.Console())
