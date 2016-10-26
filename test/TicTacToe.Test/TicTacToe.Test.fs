@@ -64,7 +64,10 @@ let ``create initializes a new TicTacToe record`` () =
 
 [<Test>]
 let ``the winner is shown on the UI`` () =
-    let output = setupFakeConsole <| List.map (sprintf "%d") xWins
+    let input = List.map (sprintf "%d") xWins
+    let input = List.append input ["n"]
+
+    let output = setupFakeConsole input
 
     startTicTacToe()
 
@@ -72,7 +75,10 @@ let ``the winner is shown on the UI`` () =
 
 [<Test>]
 let ``Draw is shown if there is no winner`` () =
-    let output = setupFakeConsole <| List.map (sprintf "%d") draw
+    let input = List.map (sprintf "%d") draw
+    let input = List.append input ["n"]
+
+    let output = setupFakeConsole input
 
     startTicTacToe()
 
@@ -81,7 +87,10 @@ let ``Draw is shown if there is no winner`` () =
 
 [<Test>]
 let ``the board is presented after each move`` () =
-    let output = setupFakeConsole <| List.map (sprintf "%d") draw
+    let input = List.map (sprintf "%d") draw
+    let input = List.append input ["n"]
+
+    let output = setupFakeConsole input
 
     startTicTacToe()
 
@@ -95,12 +104,30 @@ let ``the board is presented after each move`` () =
     |> ignore
 
 [<Test>]
+let ``the user is prompted to play again`` () =
+    let xWins = List.map (sprintf "%d") xWins
+    let draw = List.map (sprintf "%d") draw
+    let input = List.concat [xWins; ["y"]; draw; ["n"]]
+
+    let output = setupFakeConsole input
+
+    startTicTacToe()
+
+    let newGame =
+        Game.create
+        <| Player.create testStrategy "X"
+        <| Player.create testStrategy "O"
+
+    output.ToString() |> should contain "Play again? (y/n)"
+    output.ToString() |> should contain "X wins!"
+    output.ToString() |> should contain "Draw"
+
+[<Test>]
 let ``withSetup presents setup options before starting the game`` () =
-    let output =
-        draw
-        |> List.map (sprintf "%d")
-        |> List.append ["h"; "h"]
-        |> setupFakeConsole
+    let moves = List.map (sprintf "%d") draw
+    let input = List.concat [["h"; "h";]; moves; ["n"]]
+
+    let output = setupFakeConsole input
 
     TicTacToe.withSetup() |> ignore
 

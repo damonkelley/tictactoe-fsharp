@@ -17,3 +17,25 @@ let ``toWhitelistedInteger only accepts integers in the whitelist`` () =
 let ``toWhitelistedInteger returns None if it receives a non-numeral`` () =
     InputTransformer.toWhitelistedInteger [1; 2; 3] (Some "one")
     |> should equal None
+
+[<Test>]
+let ``confirm transforms y, Y, and yes to true`` () =
+    InputTransformer.confirm (Some "y")
+    |> should equal <| Some true
+
+    InputTransformer.confirm (Some "Y")
+    |> should equal <| Some true
+
+    InputTransformer.confirm (Some "yes")
+    |> should equal <| Some true
+
+[<Test>]
+let ``confirm transforms n, N, and no to false`` () =
+    InputTransformer.confirm (Some "n")
+    |> should equal <| Some false
+
+    InputTransformer.confirm (Some "N")
+    |> should equal <| Some false
+
+    InputTransformer.confirm (Some "no")
+    |> should equal <| Some false
