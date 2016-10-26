@@ -7,47 +7,44 @@ open Fake.Testing
 open FSharpLint.FAKE
 
 let buildDir  = "./build/"
-let deployDir = "./deploy/"
 let testDir = "./test/"
 
 Target "Clean" (fun _ ->
     CleanDirs [
         buildDir;
-        deployDir;
         "./test/TicTacToe.Test/bin/";
         "./test/TicTacToe.Test/obj/"
     ])
 
-let buildReleaseSetParams defaults =
-    { defaults with
-        Verbosity = Some MSBuildVerbosity.Minimal
-        Targets = ["Build"]
-        Properties =
-          [
+let appReferences  =
+    !! "/**/*.fsproj"
+
+Target "Build" (fun _ ->
+    let properties a =
+        [
             "Optimize", "True"
             "Configuration", "Release"
             "NoWarn", "0760"
-          ]
-     }
+        ]
 
-let buildTestSetParams defaults =
-    { defaults with
-        Verbosity = Some MSBuildVerbosity.Quiet
-        Targets = ["Build"]
-        Properties =
-          [
-            "Optimize", "False"
-            "DebugSymbols", "True"
-            "Configuration", "Debug"
-            "NoWarn", "0760"
-          ]
-     }
+    MSBuildWithProjectProperties buildDir "Build" properties appReferences
+    |> Log "AppBuild-Output: ")
 
-Target "Build" (fun _ ->
-    build buildReleaseSetParams "src/TicTacToe/TicTacToe.fsproj" |> DoNothing)
 
 Target "BuildTest" (fun _ ->
-    build buildTestSetParams "test/TicTacToe.Test/TicTacToe.Test.fsproj" |> DoNothing)
+    let setParams defaults =
+        { defaults with
+            Verbosity = Some MSBuildVerbosity.Quiet
+            Targets = ["Build"]
+            Properties =
+              [
+                "Optimize", "False"
+                "DebugSymbols", "True"
+                "Configuration", "Debug"
+                "NoWarn", "0760"
+              ]
+         }
+    build setParams "test/TicTacToe.Test/TicTacToe.Test.fsproj" |> DoNothing)
 
 let nunitSetParams where defaults =
     { defaults with
