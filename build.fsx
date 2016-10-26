@@ -62,17 +62,14 @@ Target "LongTests" (fun _ ->
     |> NUnit3 (nunitSetParams "cat==Long"))
 
 Target "AllTests" (fun _ ->
-    trace "Ran all tests")
+    !! (testDir + "/**/bin/Debug/*.Test.dll")
+    |> NUnit3 (nunitSetParams ""))
 
 Target "Lint" (fun _ ->
     !! "**/**/*.fsproj" |> Seq.iter (FSharpLint id))
 
-"BuildTest"
-  ==> "LongTests"
-
-"Test"
-  ==> "LongTests"
-  ==> "AllTests"
+"BuildTest" ==> "LongTests"
+"BuildTest" ==> "AllTests"
 
 "Clean"
   ==> "BuildTest"
