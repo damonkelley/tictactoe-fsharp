@@ -74,7 +74,7 @@ let ``computer never loses`` () =
 
 
 type ComputerStrategyProperties =
-    static member ``computer strategy never loses as player 1 against randome player`` () =
+    static member ``computer strategy never loses as player 1 against random player`` () =
         let game =
             Game.create
             <| Player.create Strategy.computer "O"
