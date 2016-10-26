@@ -14,7 +14,7 @@ $ brew install mono
 Then, download and build the project.
 
 ```sh
-$ git clone https://github.com/damonkelley/tictactoe-fsharp.git
+$ git clone git@github.com:damonkelley/tictactoe-fsharp.git
 $ cd tictactoe-fsharp
 $ ./build.sh
 ```
