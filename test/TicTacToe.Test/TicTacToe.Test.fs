@@ -10,8 +10,6 @@ open System.Text
 
 open TicTacToe
 
-#nowarn "0760"
-
 let xWins = [1; 4; 2; 5; 3;]
 let draw = [1; 3; 7; 4; 9; 5; 6; 8; 2]
 

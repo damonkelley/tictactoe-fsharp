@@ -3,8 +3,6 @@ module TestHelpers
 open NUnit.Framework
 open System.IO
 
-#nowarn "0760"
-
 let inspect value  =
     printf "%A" value
     value

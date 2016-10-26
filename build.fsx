@@ -10,12 +10,6 @@ let buildDir  = "./build/"
 let deployDir = "./deploy/"
 let testDir = "./test/"
 
-let appReferences  =
-    !! "/**/*.csproj"
-    ++ "/**/*.fsproj"
-
-let version = "0.1"  // or retrieve from CI server
-
 Target "Clean" (fun _ ->
     CleanDirs [
         buildDir;
@@ -24,55 +18,57 @@ Target "Clean" (fun _ ->
         "./test/TicTacToe.Test/obj/"
     ])
 
+let buildReleaseSetParams defaults =
+    { defaults with
+        Verbosity = Some MSBuildVerbosity.Minimal
+        Targets = ["Build"]
+        Properties =
+          [
+            "Optimize", "True"
+            "Configuration", "Release"
+            "NoWarn", "0760"
+          ]
+     }
+
+let buildTestSetParams defaults =
+    { defaults with
+        Verbosity = Some MSBuildVerbosity.Quiet
+        Targets = ["Build"]
+        Properties =
+          [
+            "Optimize", "False"
+            "DebugSymbols", "True"
+            "Configuration", "Debug"
+            "NoWarn", "0760"
+          ]
+     }
+
 Target "Build" (fun _ ->
-    MSBuildDebug buildDir "Build" appReferences
-    |> Log "AppBuild-Output: ")
+    build buildReleaseSetParams "src/TicTacToe/TicTacToe.fsproj" |> DoNothing)
 
 Target "BuildTest" (fun _ ->
-    let setParams defaults =
-        { defaults with
-            Verbosity = Some MSBuildVerbosity.Quiet
-            Targets = ["Build"]
-            Properties =
-              [
-                "Optimize", "True"
-                "DebugSymbols", "True"
-                "Configuration", "Debug"
-              ]
-         }
-    build setParams "test/TicTacToe.Test/TicTacToe.Test.fsproj"
-      |> DoNothing)
+    build buildTestSetParams "test/TicTacToe.Test/TicTacToe.Test.fsproj" |> DoNothing)
+
+let nunitSetParams where defaults =
+    { defaults with
+        Where = where
+        ShadowCopy = true;
+        Labels = LabelsLevel.All;
+        ToolPath = "packages/NUnit.ConsoleRunner/tools/nunit3-console.exe" }
 
 Target "Test" (fun _ ->
     !! (testDir + "/**/bin/Debug/*.Test.dll")
-    |> NUnit3 (fun p ->
-            {p with
-                Where = "cat!=Long";
-                ShadowCopy = true;
-                Labels = LabelsLevel.All;
-                ToolPath = "packages/NUnit.ConsoleRunner/tools/nunit3-console.exe"}))
-
+    |> NUnit3 (nunitSetParams "cat!=Long"))
 
 Target "LongTests" (fun _ ->
     !! (testDir + "/**/bin/Debug/*.Test.dll")
-    |> NUnit3 (fun p ->
-            {p with
-                Where = "cat==Long";
-                ShadowCopy = true;
-                Labels = LabelsLevel.All;
-                ToolPath = "packages/NUnit.ConsoleRunner/tools/nunit3-console.exe"}))
+    |> NUnit3 (nunitSetParams "cat==Long"))
 
 Target "AllTests" (fun _ ->
     trace "Ran all tests")
 
 Target "Lint" (fun _ ->
-    !! "**/**/*.fsproj"
-        |> Seq.iter (FSharpLint id))
-
-Target "Deploy" (fun _ ->
-    !! (buildDir + "/**/*.*")
-    -- "*.zip"
-    |> Zip buildDir (deployDir + "ApplicationName." + version + ".zip"))
+    !! "**/**/*.fsproj" |> Seq.iter (FSharpLint id))
 
 "BuildTest"
   ==> "LongTests"
@@ -86,6 +82,5 @@ Target "Deploy" (fun _ ->
   ==> "Lint"
   ==> "Test"
   ==> "Build"
-  ==> "Deploy"
 
 RunTargetOrDefault "Build"
