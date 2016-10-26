@@ -9,7 +9,7 @@ type Configuration =
     }
 
 let private playerTypePrompt =
-    sprintf "Player %d Type - Human or Computer? (h/c) "
+    sprintf "Is %s a Human or Computer? (h/c) "
 
 let (|Human|_|) (ui, playerType) =
     match playerType with
@@ -35,6 +35,6 @@ let private createPlayer strategy marker=
 
 let run (ui:UI) =
     { UI = ui
-    ; Player1 = createPlayer <| promptForPlayerType ui 1 <| "X"
-    ; Player2 = createPlayer <| promptForPlayerType ui 2 <| "O"
+    ; Player1 = createPlayer <| promptForPlayerType ui "X" <| "X"
+    ; Player2 = createPlayer <| promptForPlayerType ui "O" <| "O"
     }

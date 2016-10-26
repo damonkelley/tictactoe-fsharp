@@ -129,6 +129,6 @@ let ``withSetup presents setup options before starting the game`` () =
 
     TicTacToe.withSetup() |> ignore
 
-    output.ToString() |> should contain "Player 1 Type - Human or Computer?"
-    output.ToString() |> should contain "Player 2 Type - Human or Computer?"
+    output.ToString() |> should contain "Is X a Human or Computer?"
+    output.ToString() |> should contain "Is O a Human or Computer?"
     output.ToString() |> should contain "Draw"

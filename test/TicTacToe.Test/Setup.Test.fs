@@ -29,8 +29,8 @@ let ``it prompts the user to indicate the type of player 1 and player 2`` () =
         |> Setup.run
 
     let ui = (configuration.UI :?> TestUI)
-    ui.Output |> should contain "Player 1 Type - Human or Computer? (h/c) "
-    ui.Output |> should contain "Player 2 Type - Human or Computer? (h/c) "
+    ui.Output |> should contain "Is X a Human or Computer? (h/c) "
+    ui.Output |> should contain "Is O a Human or Computer? (h/c) "
     ui.Input  |> shouldEqual []
 
 [<Test>]
