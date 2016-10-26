@@ -26,7 +26,7 @@ let rec start ttt =
     playAgain ttt
 
 and playAgain ttt =
-    let anotherRound = ttt.UI.Prompt "Play again? (y/n): " confirm
+    let anotherRound = ttt.UI.Prompt Prompts.playAgain confirm
     if anotherRound then start ttt else ttt
 
 let withSetup () =

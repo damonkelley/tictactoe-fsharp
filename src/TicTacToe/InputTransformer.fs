@@ -20,3 +20,19 @@ let confirm (input:string option) =
     match input with
     | Some (Confirmation c) -> Some c
     | _                     -> None
+
+let (|PlayerX|_|) playerX =
+    match playerX with
+    | Some "X" -> Some playerX
+    | _        -> None
+
+let (|PlayerO|_|) playerO =
+    match playerO with
+    | Some "O" -> Some playerO
+    | _        -> None
+
+let playerOrder (playerX, playerO) input =
+    match input with
+    | PlayerO input -> Some (playerO, playerX)
+    | PlayerX input -> Some (playerX, playerO)
+    | _             -> None

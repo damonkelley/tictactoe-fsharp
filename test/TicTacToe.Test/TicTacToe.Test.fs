@@ -123,7 +123,7 @@ let ``the user is prompted to play again`` () =
 [<Test>]
 let ``withSetup presents setup options before starting the game`` () =
     let moves = List.map (sprintf "%d") draw
-    let input = List.concat [["h"; "h";]; moves; ["n"]]
+    let input = List.concat [["h"; "h"; "X"]; moves; ["n"]]
 
     let output = setupFakeConsole input
 
@@ -131,4 +131,5 @@ let ``withSetup presents setup options before starting the game`` () =
 
     output.ToString() |> should contain "Is X a Human or Computer?"
     output.ToString() |> should contain "Is O a Human or Computer?"
+    output.ToString() |> should contain "Which player will go first?"
     output.ToString() |> should contain "Draw"

@@ -25,7 +25,7 @@ type TestUI(input:string list) =
 [<Test>]
 let ``it prompts the user to indicate the type of player 1 and player 2`` () =
     let configuration =
-        TestUI(["h"; "h"])
+        TestUI(["h"; "h"; "X"])
         |> Setup.run
 
     let ui = (configuration.UI :?> TestUI)
@@ -34,9 +34,28 @@ let ``it prompts the user to indicate the type of player 1 and player 2`` () =
     ui.Input  |> shouldEqual []
 
 [<Test>]
+let ``it asks which player will go first`` () =
+    let configuration =
+        TestUI(["h"; "h"; "X"])
+        |> Setup.run
+
+    let ui = (configuration.UI :?> TestUI)
+    ui.Output |> should contain "Which player will go first? (X/O) "
+    ui.Input  |> shouldEqual []
+
+[<Test>]
+let ``it will correctly order the players`` () =
+    let config =
+        TestUI(["h"; "h"; "O";])
+        |> Setup.run
+
+    let game = Game.create config.Player1 config.Player2
+    game.Turn.Marker |> should equal "O"
+
+[<Test>]
 let ``it will create a human vs human configuration`` () =
     let config =
-        TestUI(["h"; "h"; "1"; "2"])
+        TestUI(["h"; "h"; "O"; "1"; "2"])
         |> Setup.run
 
     let game = Game.create config.Player1 config.Player2
@@ -47,7 +66,7 @@ let ``it will create a human vs human configuration`` () =
 [<Test>]
 let ``it will create a computer vs human configuration`` () =
     let config =
-        TestUI(["c"; "h"; "1";])
+        TestUI(["c"; "h"; "X"; "1";])
         |> Setup.run
 
     let game = Game.create config.Player1 config.Player2

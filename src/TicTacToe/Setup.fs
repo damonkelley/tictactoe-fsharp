@@ -8,9 +8,6 @@ type Configuration =
     ; Player2 : Player<Game>
     }
 
-let private playerTypePrompt =
-    sprintf "Is %s a Human or Computer? (h/c) "
-
 let (|Human|_|) (ui, playerType) =
     match playerType with
     | Some "h" -> Some (Strategy.human ui)
@@ -21,20 +18,28 @@ let (|Computer|_|) (_, playerType) =
     | Some "c" -> Some Strategy.computer
     | _        -> None
 
-let private toPlayer ui playerType =
+let private toStrategy ui playerType =
     match (ui, playerType) with
     | Human strategy
     | Computer strategy -> Some strategy
     | _                 -> None
 
 let private promptForPlayerType (ui:UI) playerNumber  =
-    ui.Prompt <| playerTypePrompt playerNumber <| toPlayer ui
+    ui.Prompt <| Prompts.playerType playerNumber <| toStrategy ui
+
+let private promptForOrder (ui:UI) players =
+    ui.Prompt Prompts.firstPlayer (InputTransformer.playerOrder players)
 
 let private createPlayer strategy marker=
     Player.create strategy marker
 
 let run (ui:UI) =
+    let playerX = createPlayer <| promptForPlayerType ui "X" <| "X"
+    let playerO = createPlayer <| promptForPlayerType ui "O" <| "O"
+
+    let (player1, player2) = promptForOrder ui (playerX, playerO)
+
     { UI = ui
-    ; Player1 = createPlayer <| promptForPlayerType ui "X" <| "X"
-    ; Player2 = createPlayer <| promptForPlayerType ui "O" <| "O"
+    ; Player1 = player1
+    ; Player2 = player2
     }

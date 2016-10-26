@@ -39,3 +39,14 @@ let ``confirm transforms n, N, and no to false`` () =
 
     InputTransformer.confirm (Some "no")
     |> should equal <| Some false
+
+[<Test>]
+let ``playerOrder returns the players in the specified order`` () =
+    InputTransformer.playerOrder (1, 2) (Some "X")
+    |> should equal <| Some (1, 2)
+
+    InputTransformer.playerOrder (1, 2) (Some "O")
+    |> should equal <| Some (2, 1)
+
+    InputTransformer.confirm (Some "A")
+    |> should equal <| None
